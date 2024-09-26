@@ -1,7 +1,0 @@
-setup.py
-robotics_model_3DOF/__init__.py
-robotics_model_3DOF/dummy_module.py
-robotics_model_3DOF.egg-info/PKG-INFO
-robotics_model_3DOF.egg-info/SOURCES.txt
-robotics_model_3DOF.egg-info/dependency_links.txt
-robotics_model_3DOF.egg-info/top_level.txt
