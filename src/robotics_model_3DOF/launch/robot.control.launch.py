@@ -57,7 +57,7 @@ def generate_launch_description():
     
     package_name = 'robotics_model_3DOF'
     
-    executable_name = ['target_randomizer', 'kinematics', 'robot_controller']
+    executable_name = ['target_randomizer', 'kinematics', 'robot_controller', 'robot_scheduler', 'keyboard']
     for i in range(len(executable_name)):
         if executable_name[i] == 'target_randomizer':
             node = Node(

@@ -1,15 +1,25 @@
 #!/usr/bin/python3
 import rclpy
+import random
+import numpy as np
+import roboticstoolbox as rtb
 
+from math import pi
 from rclpy.node import Node
+from spatialmath import SE3
+from std_srvs.srv import SetBool
+from sensor_msgs.msg import JointState
+from geometry_msgs.msg import PoseStamped
+from tf2_ros import TransformListener, Buffer
+from geometry_msgs.msg import TransformStamped, Vector3
 from rcl_interfaces.msg import SetParametersResult
 from robotics_model_interfaces.srv import RoboticsKeyboard
 
-class RobotSCHController(Node):
+class Keyboard(Node):
     def __init__(self):
-        super().__init__('robot_scheduler')
+        super().__init__('robot_keyboard')
 
-        self.create_service(RoboticsKeyboard, "robots_keyboard", self.keyboard_callback)
+        self.keyboard_srv = self.create_client(RoboticsKeyboard, "robots_keyboard")
 
         self.declare_parameter('frequency', 100.0)
 
@@ -39,17 +49,11 @@ class RobotSCHController(Node):
         # If all parameters are known, return success
         return SetParametersResult(successful=True)
     
-    def keyboard_callback(self, request: RoboticsKeyboard, response: RoboticsKeyboard):
-        srv = request
-        if srv.mode == "IPK":
-            self.get_logger().info("IPK")
-
-        elif srv.mode == "Teleoperation":
-            self.get_logger().info("Teleoperation")
-        elif srv.mode == "Auto":
-            self.get_logger().info("Auto")
+    def keyboard_call(self):
+        srv = RoboticsKeyboard.Request()
+        srv.mode = "IPK"
         
-        return response
+        self.keyboard_srv.call_async(srv)
     
     def timer_callback(self):
             pass
@@ -57,7 +61,7 @@ class RobotSCHController(Node):
             
 def main(args=None):
     rclpy.init(args=args)
-    node = RobotSCHController()
+    node = Keyboard()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
