@@ -5,13 +5,14 @@ import random
 from rclpy.node import Node
 from std_srvs.srv import SetBool
 from geometry_msgs.msg import PoseStamped
+from robotic_interfaces.srv import RandomTarget
 from rcl_interfaces.msg import SetParametersResult
 
 class TargetRandomizer(Node):
     def __init__(self):
         super().__init__('target_randomizer')
         
-        self.create_service(SetBool, 'rand_target', self.rand_target_callback)
+        self.create_service(RandomTarget, 'rand_target', self.rand_target_callback)
         self.target_pub = self.create_publisher(PoseStamped, 'target', 10)
         
         self.declare_parameter('frequency', 100.0)
@@ -50,7 +51,7 @@ class TargetRandomizer(Node):
         # If all parameters are known, return success
         return SetParametersResult(successful=True)
     
-    def rand_target_callback(self, request: SetBool, response: SetBool):
+    def rand_target_callback(self, request: RandomTarget, response: RandomTarget):
         srv = request.data
         if srv:
             
@@ -75,16 +76,17 @@ class TargetRandomizer(Node):
                     
                     self.target_pub.publish(msg)
                     response.success = True
-                    response.message = f"Target set at: {x, y, z}"
+                    # response.message = f"Target set at: {x, y, z}"
                     break
         else:
             response.success = False
-            response.message = "Get request False"
+            # response.message = "Get request False"
             
         return response
     
     def timer_callback(self):
-        print(self.target)
+        # print(self.target)
+        pass
             
 def main(args=None):
     rclpy.init(args=args)

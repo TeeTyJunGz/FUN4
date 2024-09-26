@@ -23,7 +23,7 @@ import xacro
     
 def generate_launch_description():
     
-    pkg = get_package_share_directory('robotics_model_3DOF')
+    pkg = get_package_share_directory('robotics_model_3dof')
     rviz_path = os.path.join(pkg,'config','display.rviz')
     rviz = Node(
         package='rviz2',
@@ -55,9 +55,9 @@ def generate_launch_description():
     launch_description.add_action(robot_state_publisher)
     launch_description.add_action(joint_state_publisher_gui)
     
-    package_name = 'robotics_model_3DOF'
+    package_name = 'robotics_model_3dof'
     
-    executable_name = ['target_randomizer', 'kinematics', 'robot_controller', 'robot_scheduler', 'keyboard']
+    executable_name = ['target_randomizer', 'kinematics', 'robot_controller', 'robot_scheduler']
     for i in range(len(executable_name)):
         if executable_name[i] == 'target_randomizer':
             node = Node(

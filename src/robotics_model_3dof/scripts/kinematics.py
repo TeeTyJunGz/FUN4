@@ -6,10 +6,13 @@ import roboticstoolbox as rtb
 from math import pi
 from rclpy.node import Node
 from spatialmath import SE3
+from std_msgs.msg import Bool
+from std_srvs.srv import SetBool
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped
 from tf2_ros import TransformListener, Buffer
 from geometry_msgs.msg import TransformStamped
+from robotic_interfaces.srv import RandomTarget
 from rcl_interfaces.msg import SetParametersResult
 
 L1 = 0.200
@@ -36,7 +39,11 @@ class Kinematics(Node):
     def __init__(self):
         super().__init__('kinematics_calculator')
         
-        self.create_subscription(PoseStamped, 'target', self.target_callback, 10)
+        self.create_service(SetBool, "auto", self.call_auto_callback)
+        self.call_random = self.create_client(RandomTarget, "rand_target")
+
+        # self.create_subscription(PoseStamped, 'target', self.target_callback, 10)
+        self.kinematics_Ready_State = self.create_publisher(Bool, 'kinematics_Ready_State', 10)
 
         self.q_pub = self.create_publisher(JointState, "/q_velocities", 10)
         
@@ -75,15 +82,47 @@ class Kinematics(Node):
         # If all parameters are known, return success
         return SetParametersResult(successful=True)
     
-    def target_callback(self, msg: PoseStamped):
-        x = msg.pose.position.x
-        y = msg.pose.position.y
-        z = msg.pose.position.z
+    def call_random_function(self):
+        rand = RandomTarget.Request()
+        rand.data = True
+            
+        future = self.call_random.call_async(rand)
+        # rclpy.spin_until_future_complete(self, future)
+        
+        # if future.result() is not None:
+        #         x = future.result().x_target
+        #         y = future.result().y_target
+        #         z = future.result().z_target
+                
+        #         self.target = np.array([x, y, z])
+        #         self.target_rc = True
+                
+        #         self.get_logger().info(f"target: {self.target}")
+        
+    def call_auto_callback(self, request: SetBool, response: SetBool):
+        
+        srv = request.data
+        if srv:
+            self.call_random_function()
+            response.success = True
+            
+        else:
+            response.success = False
+            
+        return response
+    
+    # def target_callback(self, msg: PoseStamped):
+    #     x = msg.pose.position.x
+    #     y = msg.pose.position.y
+    #     z = msg.pose.position.z
 
-        self.target = np.array([x, y, z])
-        self.target_rc = True
+    #     self.target = np.array([x, y, z])
+    #     self.target_rc = True
         
     def timer_callback(self):
+        msg = Bool()
+        # msg.data = True
+        
         try:
             transform: TransformStamped = self.tf_buffer.lookup_transform(
                 self.target_frame,
@@ -121,9 +160,15 @@ class Kinematics(Node):
             if np.linalg.norm(error) < 1e-3:
                 self.q_velocities.velocity = [0.0, 0.0, 0.0]
                 self.target_rc = False
-                print("Target pose reached!")
+                
+                msg.data = True
+                
+                self.get_logger().info("Target pose reached!")
+                # msg.data = False
                 
             self.q_pub.publish(self.q_velocities)
+            
+        self.kinematics_Ready_State.publish(msg)
             
 def main(args=None):
     rclpy.init(args=args)

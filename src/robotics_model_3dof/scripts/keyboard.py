@@ -13,13 +13,13 @@ from geometry_msgs.msg import PoseStamped
 from tf2_ros import TransformListener, Buffer
 from geometry_msgs.msg import TransformStamped, Vector3
 from rcl_interfaces.msg import SetParametersResult
-from robotics_model_interfaces.srv import RoboticsKeyboard
+from robotic_interfaces.srv import Keyboard
 
 class Keyboard(Node):
     def __init__(self):
         super().__init__('robot_keyboard')
 
-        self.keyboard_srv = self.create_client(RoboticsKeyboard, "robots_keyboard")
+        self.keyboard_srv = self.create_client(Keyboard, "robots_keyboard")
 
         self.declare_parameter('frequency', 100.0)
 
@@ -50,7 +50,7 @@ class Keyboard(Node):
         return SetParametersResult(successful=True)
     
     def keyboard_call(self):
-        srv = RoboticsKeyboard.Request()
+        srv = Keyboard.Request()
         srv.mode = "IPK"
         
         self.keyboard_srv.call_async(srv)
