@@ -3,13 +3,13 @@ import rclpy
 
 from rclpy.node import Node
 from rcl_interfaces.msg import SetParametersResult
-from robotics_model_interfaces.srv import RoboticsKeyboard
+from robotic_interfaces.srv import Keyboard
 
 class RobotSCHController(Node):
     def __init__(self):
         super().__init__('robot_scheduler')
 
-        self.create_service(RoboticsKeyboard, "robots_keyboard", self.keyboard_callback)
+        self.create_service(Keyboard, "robots_keyboard", self.keyboard_callback)
 
         self.declare_parameter('frequency', 100.0)
 
@@ -39,15 +39,15 @@ class RobotSCHController(Node):
         # If all parameters are known, return success
         return SetParametersResult(successful=True)
     
-    def keyboard_callback(self, request: RoboticsKeyboard, response: RoboticsKeyboard):
+    def keyboard_callback(self, request: Keyboard, response: Keyboard):
         srv = request
-        if srv.mode == "IPK":
+        if srv.request :
             self.get_logger().info("IPK")
 
-        elif srv.mode == "Teleoperation":
-            self.get_logger().info("Teleoperation")
-        elif srv.mode == "Auto":
-            self.get_logger().info("Auto")
+        # elif srv.mode == "Teleoperation":
+        #     self.get_logger().info("Teleoperation")
+        # elif srv.mode == "Auto":
+        #     self.get_logger().info("Auto")
         
         return response
     

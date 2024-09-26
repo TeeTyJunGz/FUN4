@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(robotics_model_3DOF)
+project(robotics_model_3dof)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -30,6 +30,9 @@ install(PROGRAMS
   scripts/target_randomizer.py
   scripts/robot_controller.py
   scripts/kinematics.py
+  scripts/keyboard.py
+  scripts/robot_scheduler.py
+  
   DESTINATION lib/${PROJECT_NAME}
 )
 

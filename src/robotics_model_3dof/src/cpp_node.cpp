@@ -1,4 +1,4 @@
-#include "robotics_model_3DOF/cpp_header.hpp"
+#include "robotics_model_3dof/cpp_header.hpp"
 
 #include <iostream>
 
