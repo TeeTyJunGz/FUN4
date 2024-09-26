@@ -35,13 +35,13 @@ class TargetRandomizer(Node):
                 self.get_logger().info(f'Updated frequency: {param.value}')
                 self.frequency = param.value
             elif param.name == 'L_Base_F1':
-                self.get_logger().info(f'Updated max angle: {param.value}')
+                self.get_logger().info(f'Updated Z_offset: {param.value}')
                 self.Z_offset = param.value
             elif param.name == 'L_F2_F3':
-                self.get_logger().info(f'Updated max speed: {param.value}')
+                self.get_logger().info(f'Updated L1: {param.value}')
                 self.L1 = param.value
             elif param.name == 'L_F3_Fe':
-                self.get_logger().info(f'Updated max speed: {param.value}')
+                self.get_logger().info(f'Updated L2: {param.value}')
                 self.L2 = param.value
             else:
                 self.get_logger().warn(f'Unknown parameter: {param.name}')
@@ -74,8 +74,13 @@ class TargetRandomizer(Node):
                     msg.pose.position.z = z
                     
                     self.target_pub.publish(msg)
+                    response.success = True
+                    response.message = f"Target set at: {x, y, z}"
                     break
-                               
+        else:
+            response.success = False
+            response.message = "Get request False"
+            
         return response
     
     def timer_callback(self):

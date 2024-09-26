@@ -28,6 +28,8 @@ ament_python_install_package(${PROJECT_NAME})
 # Install Python executables
 install(PROGRAMS
   scripts/target_randomizer.py
+  scripts/robot_controller.py
+  scripts/kinematics.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -48,6 +50,10 @@ install(TARGETS
 ################ INSTALL LAUNCH, ETC #################
 install(DIRECTORY
   # add directories here
+  config
+  launch
+  meshes
+  robot
   DESTINATION share/${PROJECT_NAME})
 
 ament_package()
