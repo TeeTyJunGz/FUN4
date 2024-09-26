@@ -1,0 +1,4 @@
+source;share/robotics_model_3DOF/local_setup.bash
+source;share/robotics_model_3DOF/local_setup.dsv
+source;share/robotics_model_3DOF/local_setup.sh
+source;share/robotics_model_3DOF/local_setup.zsh

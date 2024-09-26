@@ -1,0 +1,12 @@
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/uninstall.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/robotics_model_3DOF_uninstall.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/ament_cmake_python_copy_robotics_model_3DOF.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/ament_cmake_python_build_robotics_model_3DOF_egg.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/cpp_node_test.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/test.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/edit_cache.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/rebuild_cache.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/list_install_components.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/install.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/install/local.dir
+/home/teety/GitHub/FUN4/build/robotics_model_3DOF/CMakeFiles/install/strip.dir

@@ -1,0 +1,44 @@
+[0.010s] Invoking command in '/home/teety/GitHub/FUN4/build/robotics_model_3DOF': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/teety/ros2_ws/install/launch_testing_examples:/home/teety/ros2_ws/install/examples_rclpy_pointcloud_publisher:/home/teety/ros2_ws/install/examples_rclpy_minimal_subscriber:/home/teety/ros2_ws/install/examples_rclpy_minimal_service:/home/teety/ros2_ws/install/examples_rclpy_minimal_publisher:/home/teety/ros2_ws/install/examples_rclpy_minimal_client:/home/teety/ros2_ws/install/examples_rclpy_minimal_action_server:/home/teety/ros2_ws/install/examples_rclpy_minimal_action_client:/home/teety/ros2_ws/install/examples_rclpy_guard_conditions:/home/teety/ros2_ws/install/examples_rclpy_executors:/home/teety/microros_ws/install/sensor_msgs_py:/opt/ros/humble /usr/local/bin/cmake --build /home/teety/GitHub/FUN4/build/robotics_model_3DOF -- -j20 -l20
+[0.045s] [35m[1mConsolidate compiler generated dependencies of target cpp_node_test[0m
+[0.054s] [100%] Built target cpp_node_test
+[0.062s] [100%] Built target ament_cmake_python_copy_robotics_model_3DOF
+[0.212s] running egg_info
+[0.212s] writing robotics_model_3DOF.egg-info/PKG-INFO
+[0.212s] writing dependency_links to robotics_model_3DOF.egg-info/dependency_links.txt
+[0.212s] writing top-level names to robotics_model_3DOF.egg-info/top_level.txt
+[0.213s] reading manifest file 'robotics_model_3DOF.egg-info/SOURCES.txt'
+[0.213s] writing manifest file 'robotics_model_3DOF.egg-info/SOURCES.txt'
+[0.229s] [100%] Built target ament_cmake_python_build_robotics_model_3DOF_egg
+[0.237s] Invoked command in '/home/teety/GitHub/FUN4/build/robotics_model_3DOF' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/teety/ros2_ws/install/launch_testing_examples:/home/teety/ros2_ws/install/examples_rclpy_pointcloud_publisher:/home/teety/ros2_ws/install/examples_rclpy_minimal_subscriber:/home/teety/ros2_ws/install/examples_rclpy_minimal_service:/home/teety/ros2_ws/install/examples_rclpy_minimal_publisher:/home/teety/ros2_ws/install/examples_rclpy_minimal_client:/home/teety/ros2_ws/install/examples_rclpy_minimal_action_server:/home/teety/ros2_ws/install/examples_rclpy_minimal_action_client:/home/teety/ros2_ws/install/examples_rclpy_guard_conditions:/home/teety/ros2_ws/install/examples_rclpy_executors:/home/teety/microros_ws/install/sensor_msgs_py:/opt/ros/humble /usr/local/bin/cmake --build /home/teety/GitHub/FUN4/build/robotics_model_3DOF -- -j20 -l20
+[0.272s] Invoking command in '/home/teety/GitHub/FUN4/build/robotics_model_3DOF': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/teety/ros2_ws/install/launch_testing_examples:/home/teety/ros2_ws/install/examples_rclpy_pointcloud_publisher:/home/teety/ros2_ws/install/examples_rclpy_minimal_subscriber:/home/teety/ros2_ws/install/examples_rclpy_minimal_service:/home/teety/ros2_ws/install/examples_rclpy_minimal_publisher:/home/teety/ros2_ws/install/examples_rclpy_minimal_client:/home/teety/ros2_ws/install/examples_rclpy_minimal_action_server:/home/teety/ros2_ws/install/examples_rclpy_minimal_action_client:/home/teety/ros2_ws/install/examples_rclpy_guard_conditions:/home/teety/ros2_ws/install/examples_rclpy_executors:/home/teety/microros_ws/install/sensor_msgs_py:/opt/ros/humble /usr/local/bin/cmake --install /home/teety/GitHub/FUN4/build/robotics_model_3DOF
+[0.279s] -- Install configuration: ""
+[0.280s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/environment/pythonpath.sh
+[0.280s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/environment/pythonpath.dsv
+[0.280s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF-0.0.0-py3.10.egg-info
+[0.280s] -- Installing: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF-0.0.0-py3.10.egg-info/top_level.txt
+[0.280s] -- Installing: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF-0.0.0-py3.10.egg-info/dependency_links.txt
+[0.280s] -- Installing: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF-0.0.0-py3.10.egg-info/PKG-INFO
+[0.280s] -- Installing: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF-0.0.0-py3.10.egg-info/SOURCES.txt
+[0.280s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF
+[0.280s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF/__init__.py
+[0.280s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF/dummy_module.py
+[0.307s] Listing '/home/teety/GitHub/FUN4/install/robotics_model_3DOF/local/lib/python3.10/dist-packages/robotics_model_3DOF'...
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/lib/robotics_model_3DOF/target_randomizer.py
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/lib/robotics_model_3DOF/cpp_node_test
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/ament_index/resource_index/package_run_dependencies/robotics_model_3DOF
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/ament_index/resource_index/parent_prefix_path/robotics_model_3DOF
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/environment/ament_prefix_path.sh
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/environment/ament_prefix_path.dsv
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/environment/path.sh
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/environment/path.dsv
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/local_setup.bash
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/local_setup.sh
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/local_setup.zsh
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/local_setup.dsv
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/package.dsv
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/ament_index/resource_index/packages/robotics_model_3DOF
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/cmake/robotics_model_3DOFConfig.cmake
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/cmake/robotics_model_3DOFConfig-version.cmake
+[0.309s] -- Up-to-date: /home/teety/GitHub/FUN4/install/robotics_model_3DOF/share/robotics_model_3DOF/package.xml
+[0.310s] Invoked command in '/home/teety/GitHub/FUN4/build/robotics_model_3DOF' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/teety/ros2_ws/install/launch_testing_examples:/home/teety/ros2_ws/install/examples_rclpy_pointcloud_publisher:/home/teety/ros2_ws/install/examples_rclpy_minimal_subscriber:/home/teety/ros2_ws/install/examples_rclpy_minimal_service:/home/teety/ros2_ws/install/examples_rclpy_minimal_publisher:/home/teety/ros2_ws/install/examples_rclpy_minimal_client:/home/teety/ros2_ws/install/examples_rclpy_minimal_action_server:/home/teety/ros2_ws/install/examples_rclpy_minimal_action_client:/home/teety/ros2_ws/install/examples_rclpy_guard_conditions:/home/teety/ros2_ws/install/examples_rclpy_executors:/home/teety/microros_ws/install/sensor_msgs_py:/opt/ros/humble /usr/local/bin/cmake --install /home/teety/GitHub/FUN4/build/robotics_model_3DOF
