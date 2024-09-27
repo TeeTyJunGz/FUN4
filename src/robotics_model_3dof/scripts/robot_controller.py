@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import numpy as np
 import rclpy
 
 from math import pi
@@ -20,9 +21,12 @@ class RobotController(Node):
         
         self.joint_state_msg = JointState()
         self.joint_state_msg.name = ['joint_1', 'joint_2', 'joint_3']
-        self.joint_state_msg.position = [0.0, 0.0, 0.0]  # Initial positions
-        self.joint_state_msg.velocity = [0.0, 0.0, 0.0]  # Initialize velocities
-        self.position_limits = [2 * pi, 2 * pi, 2 * pi]  # Upper limits (in radians)
+        self.joint_state_msg.position = [0.0, 0.0, 0.0]
+        self.joint_state_msg.velocity = [0.0, 0.0, 0.0]
+
+        self.position_limits = [2 * pi, 2 * pi, 2 * pi]
+        # self.joint_limits_lower = [-pi/2, -pi/2, -pi/2]
+        # self.joint_limits_upper = [pi/2, pi/2, pi/2]
 
         self.create_timer(1/self.frequency, self.timer_callback)
         self.add_on_set_parameters_callback(self.set_param_callback)
@@ -58,8 +62,9 @@ class RobotController(Node):
         self.joint_state_msg.velocity = [self.q_velocities[0], self.q_velocities[1], self.q_velocities[2]]
         
         for i in range(len(self.joint_state_msg.name)):
-            
+                
             self.joint_state_msg.position[i] += self.joint_state_msg.velocity[i] * 1/self.frequency
+            # self.joint_state_msg.position[i] = np.clip(self.joint_state_msg.position[i], self.joint_limits_lower[i], self.joint_limits_upper[i])
             self.joint_state_msg.position[i] %= self.position_limits[i]
             
         self.joint_pub.publish(self.joint_state_msg)

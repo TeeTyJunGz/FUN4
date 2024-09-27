@@ -65,7 +65,7 @@ class TargetRandomizer(Node):
                 
                 distance_squared = x**2 + y**2 + (z - self.Z_offset)**2
                 
-                if r_min**2 < distance_squared < r_max**2:
+                if r_min**2 <= distance_squared <= r_max**2 and distance_squared != 0.0:
                     
                     self.target = [x, y, z]
                     

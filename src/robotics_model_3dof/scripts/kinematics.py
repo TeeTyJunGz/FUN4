@@ -64,6 +64,8 @@ class Kinematics(Node):
         self.target = np.array([0.0, 0.0, 0.0])
         self.target_rc = False
         self.q = [0.0, 0.0, 0.0]
+        self.joint_limits_min = np.array([-np.pi/2, -np.pi/2, -np.pi/2])  # Example joint lower limits
+        self.joint_limits_max = np.array([np.pi/2, np.pi/2, np.pi/2])  
         
         self.q_velocities = JointState()
         
@@ -112,9 +114,6 @@ class Kinematics(Node):
                 z = response.z_target
                 self.target = np.array([x, y, z])
                 self.target_rc = True
-                self.get_logger().info(f"----------------------------------------------------------------------------------------")
-
-                self.get_logger().info(f"Target next callable At x: {self.target[0]} , y: {self.target[1]} , z: {self.target[2]} ")
 
             else:
                 self.get_logger().error("Received an empty response from the service.")
@@ -131,6 +130,12 @@ class Kinematics(Node):
             response.success = True
         
         elif srv == "Teleop Based" or srv == "Teleop End Effector":
+            self.state_srv = srv
+            self.target_rc = True
+            
+            response.success = True
+        elif srv == "IPK":
+            self.get_logger().info(f"Mode {srv}")
             self.state_srv = srv
             self.target_rc = True
             
@@ -164,9 +169,10 @@ class Kinematics(Node):
             )
             translation = transform.transform.translation
             self.current = np.array([translation.x, translation.y, translation.z])
-            # self.get_logger().info(f"Position: x={self.translation.x}, y={self.translation.y}, z={self.translation.z}")
+            self.get_logger().info(f"Position: x={self.translation.x}, y={self.translation.y}, z={self.translation.z}")
 
         except:
+            self.get_logger().info(f"TF Idiot")
             pass
         
         if self.target_rc:
@@ -178,7 +184,8 @@ class Kinematics(Node):
 
             error = self.target - current_pose
             
-            if self.state_srv == "Auto":
+            # self.get_logger().info(self.state_srv)
+            if self.state_srv == "Auto" or self.state_srv == "IPK":
                 v_end_effector = self.Kp * error
                 
             elif self.state_srv == "Teleop Based":
@@ -200,18 +207,20 @@ class Kinematics(Node):
             self.q = self.q + q_dot * 1/self.frequency
             
             manipulability = np.linalg.det(J_full @ J_full.T)
-            self.get_logger().info(f"Manipulability {manipulability}")
+            # self.get_logger().info(f"Manipulability {manipulability}")
             
             if manipulability > self.singularity_thres:
                 self.q_velocities.velocity = [0.0, 0.0, 0.0]
                 self.get_logger().info(f"Near a singularity")
             
-            if np.linalg.norm(error) < 1e-3:
+            if np.linalg.norm(error) < 1e-3 and (self.state_srv != "Teleop Based" or self.state_srv != "Teleop End Effector"):
                 self.q_velocities.velocity = [0.0, 0.0, 0.0]
                 self.target_rc = False
                 
                 msg.data = True
                 # self.pending_response.success = True
+                # self.get_logger().info(f"----------------------------------------------------------------------------------------")
+                # self.get_logger().info(f"Next Target          At x: {self.target[0]} , y: {self.target[1]} , z: {self.target[2]} ")
                 self.get_logger().info(f"Target pose reached! At x: {current_pose[0]}, y: {current_pose[1]}, z: {current_pose[2]}")
                 
             self.q_pub.publish(self.q_velocities)

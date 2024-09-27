@@ -12,12 +12,12 @@ class RobotSCHController(Node):
     def __init__(self):
         super().__init__('robot_scheduler')
 
-        self.create_service(Keyboard, "robots_keyboard", self.keyboard_callback)
+        self.create_service(Keyboard, "robotKeyboard", self.keyboard_callback)
         self.call_run_auto = self.create_client(StateScheduler, "state_sch")
         # self.call_kinematics_state = self.create_client(SetBool, "kinematics_Ready_State_Service")
         
         # self.call_random = self.create_client(SetBool, "rand_target")
-        self.create_subscription(String, 'joy_mode', self.joy_mode_callback, 10)
+        # self.create_subscription(String, 'joy_mode', self.joy_mode_callback, 10)
         self.create_subscription(Bool, 'kinematics_Ready_State', self.kinematics_state_callback, 10)
         self.target_pub = self.create_publisher(PoseStamped, 'IPK_target', 10)
 
@@ -56,10 +56,7 @@ class RobotSCHController(Node):
         srv = request
         if srv.mode == "IPK" :
             self.get_logger().info("Inverse Pose Kinematics Mode")
-            
-            self.IPK = True
-            self.mode = srv.mode
-            
+                                    
             r_max = self.L1 + self.L2
             r_min = abs(self.L1 - self.L2)
             
@@ -71,11 +68,15 @@ class RobotSCHController(Node):
             
             response.message = "Change mode to Inverse Pose Kinematics (IPK) successfully"
 
-            if r_min**2 < distance_squared < r_max**2:
+            if r_min**2 <= distance_squared <= r_max**2 and distance_squared != 0.0:
                 self.get_logger().info(f"Target is in robot workspace!")
                 response.workspace = "Target is in robot workspace!"
                 
                 self.IPK_target = [srv.x, srv.y, srv.z]
+                self.kinematics_state = True
+                self.mode = srv.mode
+                self.IPK = True
+                self.pub_target(self.IPK_target)
                 response.success = True
                 
             else:
@@ -84,7 +85,7 @@ class RobotSCHController(Node):
 
                 response.success = False
             
-        elif srv.mode == "Teleop":
+        elif "Teleop" in srv.mode:
             self.get_logger().info("Tele-operation Mode")
             
             self.mode = srv.mode
@@ -94,20 +95,20 @@ class RobotSCHController(Node):
             
         elif srv.mode == "Auto":
             self.get_logger().info("Autonomous Mode")
-            
+            self.kinematics_state = True
             self.mode = srv.mode
                         
             response.message = "Change mode to Autonomous (Auto) successfully"            
             response.success = True
             
         else:
-            response.message = "Unknown Mode, try use IPK, Teleop, Auto"            
+            response.message = "Unknown Mode, try use IPK, Teleop Based / End Effector, Auto"            
             response.success = False
             
         return response
     
-    def joy_mode_callback(self, msg: String):
-        self.joy = msg.data
+    # def joy_mode_callback(self, msg: String):
+    #     self.joy = msg.data
         
     def kinematics_state_callback(self, msg: Bool):
         if msg.data:
@@ -116,11 +117,7 @@ class RobotSCHController(Node):
     def call_state_function(self, state):
         srv = StateScheduler.Request()
         
-        if state == "Teleop":
-            srv.state = state + " " + self.joy
-            
-        elif state == "Auto":
-            srv.state = state
+        srv.state = state
                         
         future = self.call_run_auto.call_async(srv)
         # future.add_done_callback(self.handle_auto_target_response)
@@ -151,23 +148,17 @@ class RobotSCHController(Node):
         
         elif self.mode == "IPK" and self.kinematics_state and self.IPK:
             
-            self.pub_target(self.IPK_target)
+            # self.pub_target(self.IPK_target)
+            self.call_state_function(self.mode)
             self.kinematics_state = False
             self.IPK = False
                         
-        elif self.mode == "Teleop":
-            self.call_state_function("Teleop")
+        elif self.mode == "Teleop Based" or self.mode == "Teleop End Effector":
+            self.call_state_function(self.mode)
                         
         elif self.mode == "Auto" and self.kinematics_state:
             
             self.call_state_function("Auto")
-            
-            # srv = SetBool.Request()
-            # srv.data = True
-            # future = self.call_kinematics_state.call_async(srv)
-            
-            # future.add_done_callback(self.handle_random_target_response)
-            
             self.kinematics_state = False
             
 
