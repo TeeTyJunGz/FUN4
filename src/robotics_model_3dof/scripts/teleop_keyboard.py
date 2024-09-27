@@ -1,4 +1,5 @@
-# teleop_twist_keyboard_custom.py
+#!/usr/bin/python3
+
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
@@ -15,6 +16,11 @@ Moving around:
 i/, : increase/decrease z axis velocity
 
 u/m : increase/decrease speed
+
+e : End
+b : publish to extra_topic2
+
+Release any key to stop.
 
 CTRL-C to quit
 """
@@ -35,14 +41,14 @@ speed_bindings = {
 
 class TeleopNode(Node):
     def __init__(self):
-        super().__init__('teleop_keyboard')
+        super().__init__('teleop_twist_keyboard')
         self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
         self.settings = termios.tcgetattr(sys.stdin)
-        self.speed = 0.5  # Initial speed
-
+        self.speed = 0.5
+        self.key_timeout = 0.1
+        
     def run(self):
         twist = Twist()
-
         try:
             print(msg)
             while True:
@@ -58,11 +64,15 @@ class TeleopNode(Node):
                     self.speed *= speed_bindings[key]
                     print(f"Current speed: {self.speed}")
 
-                else:
+                elif key == '':
                     twist.linear.x = 0.0
                     twist.linear.y = 0.0
                     twist.linear.z = 0.0
                     self.publisher.publish(twist)
+                
+                else:
+                    if key == '\x03':
+                        break
 
         except Exception as e:
             print(e)
@@ -72,14 +82,21 @@ class TeleopNode(Node):
             twist.linear.y = 0.0
             twist.linear.z = 0.0
             self.publisher.publish(twist)
-            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
+            self.cleanup()
 
     def get_key(self):
         tty.setraw(sys.stdin.fileno())
-        select.select([sys.stdin], [], [], 0)
-        key = sys.stdin.read(1)
+        rlist, _, _ = select.select([sys.stdin], [], [], self.key_timeout)
+        if rlist:
+            key = sys.stdin.read(1)
+        else:
+            key = ''
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
         return key
+
+    def cleanup(self):
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
+        print("\nShutting down gracefully...")
 
 def main(args=None):
     rclpy.init(args=args)
@@ -88,7 +105,7 @@ def main(args=None):
     try:
         node.run()
     except KeyboardInterrupt:
-        pass
+        node.cleanup()
     finally:
         node.destroy_node()
         rclpy.shutdown()

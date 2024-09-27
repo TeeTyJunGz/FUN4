@@ -50,9 +50,11 @@ class Kinematics(Node):
         self.end_effector = self.create_publisher(PoseStamped, 'end_effector', 10)
         self.q_pub = self.create_publisher(JointState, "q_velocities", 10)
         
+        self.declare_parameter('singularity_thres', 0.01)
         self.declare_parameter('frequency', 100.0)
         self.declare_parameter('Kp', 1.0)
 
+        self.singularity_thres = self.get_parameter('singularity_thres').get_parameter_value().double_value
         self.frequency = self.get_parameter('frequency').get_parameter_value().double_value
         self.Kp = self.get_parameter('Kp').get_parameter_value().double_value
         
@@ -77,7 +79,10 @@ class Kinematics(Node):
     
     def set_param_callback(self, params):
         for param in params:
-            if param.name == 'frequency':
+            if param.name == 'singularity_thres':
+                self.get_logger().info(f'Updated singularity_threshold: {param.value}')
+                self.singularity_thres = param.value
+            elif param.name == 'frequency':
                 self.get_logger().info(f'Updated frequency: {param.value}')
                 self.frequency = param.value
             elif param.name == 'Kp':
@@ -182,12 +187,20 @@ class Kinematics(Node):
             
             J_full = robot.jacob0(self.q)
             J_translational = J_full[:3, :3]  # 3x3 matrix
-                                    
+                        
+            
             q_dot = np.linalg.pinv(J_translational).dot(v_end_effector)
                         
             self.q_velocities.velocity = [q_dot[0], q_dot[1], q_dot[2]]
             
             self.q = self.q + q_dot * 1/self.frequency
+            
+            manipulability = np.linalg.det(J_full @ J_full.T)
+            self.get_logger().info(f"Manipulability {manipulability}")
+            
+            if manipulability > self.singularity_thres:
+                self.q_velocities.velocity = [0.0, 0.0, 0.0]
+                self.get_logger().info(f"Near a singularity")
             
             if np.linalg.norm(error) < 1e-3:
                 self.q_velocities.velocity = [0.0, 0.0, 0.0]
