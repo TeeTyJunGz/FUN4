@@ -5,3 +5,4 @@ float64 z
 ---
 bool success
 string message
+string workspace

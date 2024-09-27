@@ -42,13 +42,13 @@ class Kinematics(Node):
         self.create_service(SetBool, "auto", self.call_auto_callback)
         self.call_random = self.create_client(RandomTarget, "rand_target")
 
-        # self.create_subscription(PoseStamped, 'target', self.target_callback, 10)
+        self.create_subscription(PoseStamped, 'target', self.target_callback, 10)
         self.kinematics_Ready_State = self.create_publisher(Bool, 'kinematics_Ready_State', 10)
 
         self.q_pub = self.create_publisher(JointState, "/q_velocities", 10)
         
         self.declare_parameter('frequency', 100.0)
-        self.declare_parameter('Kp', 10.0)
+        self.declare_parameter('Kp', 5.0)
 
         self.frequency = self.get_parameter('frequency').get_parameter_value().double_value
         self.Kp = self.get_parameter('Kp').get_parameter_value().double_value
@@ -82,28 +82,34 @@ class Kinematics(Node):
         # If all parameters are known, return success
         return SetParametersResult(successful=True)
     
-    def call_random_function(self):
+    def call_random_function(self, boolean):
         rand = RandomTarget.Request()
-        rand.data = True
+        rand.data = boolean
             
         future = self.call_random.call_async(rand)
-        # rclpy.spin_until_future_complete(self, future)
         
-        # if future.result() is not None:
-        #         x = future.result().x_target
-        #         y = future.result().y_target
-        #         z = future.result().z_target
-                
-        #         self.target = np.array([x, y, z])
-        #         self.target_rc = True
-                
-        #         self.get_logger().info(f"target: {self.target}")
+        future.add_done_callback(self.handle_random_target_response)
         
+    def handle_random_target_response(self, future):
+        try:
+            response = future.result()
+            if response:
+                x = response.x_target
+                y = response.y_target
+                z = response.z_target
+                self.target = np.array([x, y, z])
+                self.target_rc = True
+                self.get_logger().info(f"Received target: {self.target}")
+            else:
+                self.get_logger().error("Received an empty response from the service.")
+        except Exception as e:
+            self.get_logger().error(f"Service call failed with error: {str(e)}")
+            
     def call_auto_callback(self, request: SetBool, response: SetBool):
         
         srv = request.data
         if srv:
-            self.call_random_function()
+            self.call_random_function(srv)
             response.success = True
             
         else:
@@ -111,13 +117,13 @@ class Kinematics(Node):
             
         return response
     
-    # def target_callback(self, msg: PoseStamped):
-    #     x = msg.pose.position.x
-    #     y = msg.pose.position.y
-    #     z = msg.pose.position.z
+    def target_callback(self, msg: PoseStamped):
+        x = msg.pose.position.x
+        y = msg.pose.position.y
+        z = msg.pose.position.z
 
-    #     self.target = np.array([x, y, z])
-    #     self.target_rc = True
+        self.target = np.array([x, y, z])
+        self.target_rc = True
         
     def timer_callback(self):
         msg = Bool()
@@ -163,7 +169,7 @@ class Kinematics(Node):
                 
                 msg.data = True
                 
-                self.get_logger().info("Target pose reached!")
+                self.get_logger().info(f"Target pose reached! At x: {current_pose[0]}, y: {current_pose[1]}, z: {current_pose[2]}")
                 # msg.data = False
                 
             self.q_pub.publish(self.q_velocities)

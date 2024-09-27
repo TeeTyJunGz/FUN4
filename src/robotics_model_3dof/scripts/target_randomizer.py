@@ -69,12 +69,15 @@ class TargetRandomizer(Node):
                     
                     self.target = [x, y, z]
                     
-                    msg = PoseStamped()
-                    msg.pose.position.x = x
-                    msg.pose.position.y = y
-                    msg.pose.position.z = z
+                    # msg = PoseStamped()
+                    # msg.pose.position.x = x
+                    # msg.pose.position.y = y
+                    # msg.pose.position.z = z
                     
-                    self.target_pub.publish(msg)
+                    # self.target_pub.publish(msg)
+                    response.x_target = x
+                    response.y_target = y
+                    response.z_target = z
                     response.success = True
                     # response.message = f"Target set at: {x, y, z}"
                     break
