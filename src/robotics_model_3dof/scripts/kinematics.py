@@ -161,29 +161,45 @@ class Kinematics(Node):
         msg = Bool()
         self.eff_msg.header.stamp = self.get_clock().now().to_msg()
         
-        try:
-            transform: TransformStamped = self.tf_buffer.lookup_transform(
-                self.target_frame,
-                self.source_frame,
-                rclpy.time.Time()
-            )
-            translation = transform.transform.translation
-            self.current = np.array([translation.x, translation.y, translation.z])
-            self.get_logger().info(f"Position: x={self.translation.x}, y={self.translation.y}, z={self.translation.z}")
+        # try:
+        #     transform: TransformStamped = self.tf_buffer.lookup_transform(
+        #         self.target_frame,
+        #         self.source_frame,
+        #         rclpy.time.Time()
+        #     )
+        #     translation = transform.transform.translation
+        #     self.current = np.array([translation.x, translation.y, translation.z])
+        #     self.get_logger().info(f"Position: x={self.translation.x}, y={self.translation.y}, z={self.translation.z}")
 
-        except:
-            self.get_logger().info(f"TF Idiot")
-            pass
+        # except:
+        #     self.get_logger().info(f"TF Idiot")
+        try:
+            # Lookup the transform between base_link and end_effector
+            now = rclpy.time.Time()
+            transform: TransformStamped = self.tf_buffer.lookup_transform(
+                'link_0',  # Source frame
+                'end_effector',  # Target frame
+                now,  # Get the latest available transform
+                timeout=rclpy.duration.Duration(seconds=5.0)  # Timeout after 1 second
+            )
+
+            # Extract the position
+            position = transform.transform.translation
+            # self.get_logger().info(f"End-Effector Position: x={position.x}, y={position.y}, z={position.z}")
+
+        except Exception as e:
+            self.get_logger().warn(f"Could not transform end_effector: {e}")
+            # return
         
         if self.target_rc:
-            current_pose = robot.fkine(self.q).t[:3]
-                    
-            self.eff_msg.pose.position.x = current_pose[0]
-            self.eff_msg.pose.position.y = current_pose[1]
-            self.eff_msg.pose.position.z = current_pose[2]
+            # current_pose = robot.fkine(self.q).t[:3]
+            current_pose = np.array([position.x, position.y, position.z])
+            # self.eff_msg.pose.position.x = current_pose[0]
+            # self.eff_msg.pose.position.y = current_pose[1]
+            # self.eff_msg.pose.position.z = current_pose[2]
 
             error = self.target - current_pose
-            
+            self.get_logger().info(f"Error: {error}")
             # self.get_logger().info(self.state_srv)
             if self.state_srv == "Auto" or self.state_srv == "IPK":
                 v_end_effector = self.Kp * error
@@ -204,7 +220,7 @@ class Kinematics(Node):
                         
             self.q_velocities.velocity = [q_dot[0], q_dot[1], q_dot[2]]
             
-            self.q = self.q + q_dot * 1/self.frequency
+            # self.q = self.q + q_dot * 1/self.frequency
             
             manipulability = np.linalg.det(J_full @ J_full.T)
             # self.get_logger().info(f"Manipulability {manipulability}")
