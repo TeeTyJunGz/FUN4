@@ -130,7 +130,7 @@ class Kinematics(Node):
             
             response.success = True
         
-        elif srv == "Teleop":
+        elif srv == "Teleop Based" or srv == "Teleop End Effector":
             self.state_srv = srv
             self.target_rc = True
             
@@ -181,10 +181,14 @@ class Kinematics(Node):
             if self.state_srv == "Auto":
                 v_end_effector = self.Kp * error
                 
-            elif self.state_srv == "Teleop":
+            elif self.state_srv == "Teleop Based":
                 v_end_effector = self.cmd_vel
                 # self.get_logger().info(f"End Effector Velocity x: {v_end_effector[0]}, y: {v_end_effector[1]}, z: {v_end_effector[2]}")
-            
+            elif self.state_srv == "Teleop End Effector":
+                T_e = robot.fkine(self.q)
+                R_e = T_e.R
+                v_end_effector = self.cmd_vel @ R_e
+                        
             J_full = robot.jacob0(self.q)
             J_translational = J_full[:3, :3]  # 3x3 matrix
                         

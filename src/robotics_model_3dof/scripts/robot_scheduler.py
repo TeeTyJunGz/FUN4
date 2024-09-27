@@ -2,7 +2,7 @@
 import rclpy
 
 from rclpy.node import Node
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 from std_srvs.srv import SetBool
 from geometry_msgs.msg import PoseStamped
 from robotic_interfaces.srv import Keyboard, StateScheduler
@@ -17,7 +17,7 @@ class RobotSCHController(Node):
         # self.call_kinematics_state = self.create_client(SetBool, "kinematics_Ready_State_Service")
         
         # self.call_random = self.create_client(SetBool, "rand_target")
-        
+        self.create_subscription(String, 'joy_mode', self.joy_mode_callback, 10)
         self.create_subscription(Bool, 'kinematics_Ready_State', self.kinematics_state_callback, 10)
         self.target_pub = self.create_publisher(PoseStamped, 'IPK_target', 10)
 
@@ -31,6 +31,7 @@ class RobotSCHController(Node):
         self.L1 = self.get_parameter('L_F2_F3').get_parameter_value().double_value
         self.L2 = self.get_parameter('L_F3_Fe').get_parameter_value().double_value
 
+        self.joy = "Based"
         self.mode = "Initial"
         self.kinematics_state = True
         self.IPK = False
@@ -105,14 +106,22 @@ class RobotSCHController(Node):
             
         return response
     
+    def joy_mode_callback(self, msg: String):
+        self.joy = msg.data
+        
     def kinematics_state_callback(self, msg: Bool):
         if msg.data:
             self.kinematics_state = True
         
     def call_state_function(self, state):
         srv = StateScheduler.Request()
-        srv.state = state
         
+        if state == "Teleop":
+            srv.state = state + " " + self.joy
+            
+        elif state == "Auto":
+            srv.state = state
+                        
         future = self.call_run_auto.call_async(srv)
         # future.add_done_callback(self.handle_auto_target_response)
         # rclpy.spin_until_future_complete(self, future)
