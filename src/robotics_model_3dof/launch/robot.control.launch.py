@@ -80,7 +80,7 @@ def generate_launch_description():
             name = executable_name[i],
             parameters=[
             { 'frequency': 100.0 },
-            { 'Kp': 5.0 }
+            { 'Kp': 1.0 }
             ]
         )
         elif executable_name[i] == 'robot_controller':

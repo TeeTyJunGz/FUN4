@@ -19,7 +19,7 @@ class RobotSCHController(Node):
         # self.call_random = self.create_client(SetBool, "rand_target")
         
         self.create_subscription(Bool, 'kinematics_Ready_State', self.kinematics_state_callback, 10)
-        self.target_pub = self.create_publisher(PoseStamped, 'target', 10)
+        self.target_pub = self.create_publisher(PoseStamped, 'IPK_target', 10)
 
         self.declare_parameter('frequency', 100.0)
         self.declare_parameter('L_Base_F1', 0.2)

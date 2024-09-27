@@ -43,17 +43,19 @@ class Kinematics(Node):
         # self.create_service(SetBool, "kinematics_Ready_State_Service", self.kinematics_state_callback)
         self.call_random = self.create_client(RandomTarget, "rand_target")
 
-        self.create_subscription(PoseStamped, 'target', self.target_callback, 10)
+        self.create_subscription(PoseStamped, 'IPK_target', self.target_callback, 10)
         self.kinematics_Ready_State = self.create_publisher(Bool, 'kinematics_Ready_State', 10)
-        self.kinematics_Ready_State = self.create_publisher(Bool, 'kinematics_Ready_State', 10)
+        self.end_effector = self.create_publisher(PoseStamped, 'end_effector', 10)
 
         self.q_pub = self.create_publisher(JointState, "q_velocities", 10)
         
         self.declare_parameter('frequency', 100.0)
-        self.declare_parameter('Kp', 5.0)
+        self.declare_parameter('Kp', 1.0)
 
         self.frequency = self.get_parameter('frequency').get_parameter_value().double_value
         self.Kp = self.get_parameter('Kp').get_parameter_value().double_value
+        
+        self.eff_msg = PoseStamped()
         
         self.target = np.array([0.0, 0.0, 0.0])
         self.target_rc = False
@@ -101,7 +103,10 @@ class Kinematics(Node):
                 z = response.z_target
                 self.target = np.array([x, y, z])
                 self.target_rc = True
-                self.get_logger().info(f"Received target: {self.target}")
+                self.get_logger().info(f"----------------------------------------------------------------------------------------")
+
+                self.get_logger().info(f"Target next callable At x: {self.target[0]} , y: {self.target[1]} , z: {self.target[2]} ")
+
             else:
                 self.get_logger().error("Received an empty response from the service.")
         except Exception as e:
@@ -131,6 +136,7 @@ class Kinematics(Node):
         
     def timer_callback(self):
         msg = Bool()
+        self.eff_msg.header.stamp = self.get_clock().now().to_msg()
         
         try:
             transform: TransformStamped = self.tf_buffer.lookup_transform(
@@ -148,14 +154,18 @@ class Kinematics(Node):
         if self.target_rc:
             current_pose = robot.fkine(self.q).t[:3]
                     
+            self.eff_msg.pose.position.x = current_pose[0]
+            self.eff_msg.pose.position.y = current_pose[1]
+            self.eff_msg.pose.position.z = current_pose[2]
+
             error = self.target - current_pose
             v_end_effector = self.Kp * error
             
             J_full = robot.jacob0(self.q)
             J_translational = J_full[:3, :3]  # 3x3 matrix
-
+                                    
             q_dot = np.linalg.pinv(J_translational).dot(v_end_effector)
-            
+                        
             self.q_velocities.velocity = [q_dot[0], q_dot[1], q_dot[2]]
             
             self.q = self.q + q_dot * 1/self.frequency
@@ -171,6 +181,7 @@ class Kinematics(Node):
             self.q_pub.publish(self.q_velocities)
             
         self.kinematics_Ready_State.publish(msg)
+        self.end_effector.publish(self.eff_msg)
             
 def main(args=None):
     rclpy.init(args=args)
