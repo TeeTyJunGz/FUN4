@@ -11,8 +11,8 @@ from std_srvs.srv import SetBool
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped
 from tf2_ros import TransformListener, Buffer
-from geometry_msgs.msg import TransformStamped
-from robotic_interfaces.srv import RandomTarget
+from geometry_msgs.msg import TransformStamped, Twist
+from robotic_interfaces.srv import RandomTarget, StateScheduler
 from rcl_interfaces.msg import SetParametersResult
 
 L1 = 0.200
@@ -39,14 +39,15 @@ class Kinematics(Node):
     def __init__(self):
         super().__init__('kinematics_calculator')
         
-        self.create_service(SetBool, "auto", self.call_auto_callback)
+        self.create_service(StateScheduler, "state_sch", self.call_state_callback)
         # self.create_service(SetBool, "kinematics_Ready_State_Service", self.kinematics_state_callback)
         self.call_random = self.create_client(RandomTarget, "rand_target")
 
         self.create_subscription(PoseStamped, 'IPK_target', self.target_callback, 10)
+        self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 10)
+
         self.kinematics_Ready_State = self.create_publisher(Bool, 'kinematics_Ready_State', 10)
         self.end_effector = self.create_publisher(PoseStamped, 'end_effector', 10)
-
         self.q_pub = self.create_publisher(JointState, "q_velocities", 10)
         
         self.declare_parameter('frequency', 100.0)
@@ -57,6 +58,7 @@ class Kinematics(Node):
         
         self.eff_msg = PoseStamped()
         
+        self.cmd_vel= np.array([0.0, 0.0, 0.0])
         self.target = np.array([0.0, 0.0, 0.0])
         self.target_rc = False
         self.q = [0.0, 0.0, 0.0]
@@ -67,6 +69,8 @@ class Kinematics(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.target_frame = "end_effector"
         self.source_frame = "link_0"
+        
+        self.state_srv = "Initial"
 
         self.create_timer(1/self.frequency, self.timer_callback)
         self.add_on_set_parameters_callback(self.set_param_callback)
@@ -112,19 +116,25 @@ class Kinematics(Node):
         except Exception as e:
             self.get_logger().error(f"Service call failed with error: {str(e)}")
             
-    def call_auto_callback(self, request: SetBool, response: SetBool):
+    def call_state_callback(self, request: StateScheduler, response: StateScheduler):
         
-        srv = request.data
-        if srv:
-            self.call_random_function(srv)
-            self.pending_response = response
-            # response.success = True
-            return self.pending_response
+        srv = request.state
+        if srv == "Auto":
+            self.call_random_function(True)
+            self.state_srv = srv
             
+            response.success = True
+        
+        elif srv == "Teleop":
+            self.state_srv = srv
+            self.target_rc = True
+            
+            response.success = True
         else:
+            self.target_rc = False
             response.success = False
             
-            return response
+        return response
     
     def target_callback(self, msg: PoseStamped):
         x = msg.pose.position.x
@@ -133,6 +143,9 @@ class Kinematics(Node):
 
         self.target = np.array([x, y, z])
         self.target_rc = True
+        
+    def cmd_vel_callback(self, msg: Twist):
+        self.cmd_vel = np.array([msg.linear.x, msg.linear.y, msg.linear.z])
         
     def timer_callback(self):
         msg = Bool()
@@ -159,7 +172,13 @@ class Kinematics(Node):
             self.eff_msg.pose.position.z = current_pose[2]
 
             error = self.target - current_pose
-            v_end_effector = self.Kp * error
+            
+            if self.state_srv == "Auto":
+                v_end_effector = self.Kp * error
+                
+            elif self.state_srv == "Teleop":
+                v_end_effector = self.cmd_vel
+                # self.get_logger().info(f"End Effector Velocity x: {v_end_effector[0]}, y: {v_end_effector[1]}, z: {v_end_effector[2]}")
             
             J_full = robot.jacob0(self.q)
             J_translational = J_full[:3, :3]  # 3x3 matrix

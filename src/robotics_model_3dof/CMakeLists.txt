@@ -30,7 +30,7 @@ install(PROGRAMS
   scripts/target_randomizer.py
   scripts/robot_controller.py
   scripts/kinematics.py
-  scripts/keyboard.py
+  scripts/teleop_keyboard.py
   scripts/robot_scheduler.py
   
   DESTINATION lib/${PROJECT_NAME}

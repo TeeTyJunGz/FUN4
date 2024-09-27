@@ -5,7 +5,7 @@ from rclpy.node import Node
 from std_msgs.msg import Bool
 from std_srvs.srv import SetBool
 from geometry_msgs.msg import PoseStamped
-from robotic_interfaces.srv import Keyboard
+from robotic_interfaces.srv import Keyboard, StateScheduler
 from rcl_interfaces.msg import SetParametersResult
 
 class RobotSCHController(Node):
@@ -13,7 +13,7 @@ class RobotSCHController(Node):
         super().__init__('robot_scheduler')
 
         self.create_service(Keyboard, "robots_keyboard", self.keyboard_callback)
-        self.call_run_auto = self.create_client(SetBool, "auto")
+        self.call_run_auto = self.create_client(StateScheduler, "state_sch")
         # self.call_kinematics_state = self.create_client(SetBool, "kinematics_Ready_State_Service")
         
         # self.call_random = self.create_client(SetBool, "rand_target")
@@ -109,9 +109,9 @@ class RobotSCHController(Node):
         if msg.data:
             self.kinematics_state = True
         
-    def call_auto_function(self, boolean):
-        srv = SetBool.Request()
-        srv.data = boolean
+    def call_state_function(self, state):
+        srv = StateScheduler.Request()
+        srv.state = state
         
         future = self.call_run_auto.call_async(srv)
         # future.add_done_callback(self.handle_auto_target_response)
@@ -147,11 +147,11 @@ class RobotSCHController(Node):
             self.IPK = False
                         
         elif self.mode == "Teleop":
-            pass
+            self.call_state_function("Teleop")
                         
         elif self.mode == "Auto" and self.kinematics_state:
             
-            self.call_auto_function(True)
+            self.call_state_function("Auto")
             
             # srv = SetBool.Request()
             # srv.data = True

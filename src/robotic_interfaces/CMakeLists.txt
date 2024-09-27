@@ -16,6 +16,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Keyboard.srv"
   "srv/RandomTarget.srv"
+  "srv/StateScheduler.srv"
  )
 
 if(BUILD_TESTING)
