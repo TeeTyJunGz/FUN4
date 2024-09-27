@@ -27,7 +27,6 @@ class TargetRandomizer(Node):
         
         self.target = []
 
-        self.create_timer(1/self.frequency, self.timer_callback)
         self.add_on_set_parameters_callback(self.set_param_callback)
     
     def set_param_callback(self, params):
@@ -79,18 +78,12 @@ class TargetRandomizer(Node):
                     response.z_target = z
                     response.success = True
                     
-                    # response.message = f"Target set at: {x, y, z}"
                     self.target_pub.publish(msg)
                     break
         else:
             response.success = False
-            # response.message = "Get request False"
             
         return response
-    
-    def timer_callback(self):
-        # print(self.target)
-        pass
             
 def main(args=None):
     rclpy.init(args=args)

@@ -13,11 +13,8 @@ class RobotSCHController(Node):
         super().__init__('robot_scheduler')
 
         self.create_service(Keyboard, "robotKeyboard", self.keyboard_callback)
-        self.call_run_auto = self.create_client(StateScheduler, "state_sch")
-        # self.call_kinematics_state = self.create_client(SetBool, "kinematics_Ready_State_Service")
-        
-        # self.call_random = self.create_client(SetBool, "rand_target")
-        # self.create_subscription(String, 'joy_mode', self.joy_mode_callback, 10)
+        self.call_by_sch = self.create_client(StateScheduler, "state_sch")
+
         self.create_subscription(Bool, 'kinematics_Ready_State', self.kinematics_state_callback, 10)
         self.target_pub = self.create_publisher(PoseStamped, 'IPK_target', 10)
 
@@ -45,6 +42,15 @@ class RobotSCHController(Node):
             if param.name == 'frequency':
                 self.get_logger().info(f'Updated frequency: {param.value}')
                 self.frequency = param.value
+            elif param.name == 'L_Base_F1':
+                self.get_logger().info(f'Updated Z_offset: {param.value}')
+                self.Z_offset = param.value
+            elif param.name == 'L_F2_F3':
+                self.get_logger().info(f'Updated L1: {param.value}')
+                self.L1 = param.value
+            elif param.name == 'L_F3_Fe':
+                self.get_logger().info(f'Updated L2: {param.value}')
+                self.L2 = param.value
             else:
                 self.get_logger().warn(f'Unknown parameter: {param.name}')
                 # Return failure result for unknown parameters
@@ -106,9 +112,6 @@ class RobotSCHController(Node):
             response.success = False
             
         return response
-    
-    # def joy_mode_callback(self, msg: String):
-    #     self.joy = msg.data
         
     def kinematics_state_callback(self, msg: Bool):
         if msg.data:
@@ -119,21 +122,7 @@ class RobotSCHController(Node):
         
         srv.state = state
                         
-        future = self.call_run_auto.call_async(srv)
-        # future.add_done_callback(self.handle_auto_target_response)
-        # rclpy.spin_until_future_complete(self, future)
-        
-    # def handle_auto_target_response(self, future):
-    #     try:
-    #         response = future.result()
-    #         if response:
-    #             self.kinematics_state = response.success
-    #             self.get_logger().info(f"Kine: {self.kinematics_state}")
-
-    #         else:
-    #             self.get_logger().error("Received an empty response from the service.")
-    #     except Exception as e:
-    #         self.get_logger().error(f"Service call failed with error: {str(e)}")
+        future = self.call_by_sch.call_async(srv)
             
     def pub_target(self, arr):
         msg = PoseStamped()
@@ -147,8 +136,7 @@ class RobotSCHController(Node):
             pass
         
         elif self.mode == "IPK" and self.kinematics_state and self.IPK:
-            
-            # self.pub_target(self.IPK_target)
+
             self.call_state_function(self.mode)
             self.kinematics_state = False
             self.IPK = False
@@ -158,7 +146,7 @@ class RobotSCHController(Node):
                         
         elif self.mode == "Auto" and self.kinematics_state:
             
-            self.call_state_function("Auto")
+            self.call_state_function(self.mode)
             self.kinematics_state = False
             
 

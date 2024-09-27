@@ -13,20 +13,20 @@ class RobotController(Node):
         
         self.joint_pub = self.create_publisher(JointState, "/joint_states", 10)
         self.create_subscription(JointState, "q_velocities", self.q_velocities_callback, 10)
+        
         self.declare_parameter('frequency', 100.0)
+        self.declare_parameter('joint_name', ['joint_1', 'joint_2', 'joint_3'])
 
         self.frequency = self.get_parameter('frequency').get_parameter_value().double_value
         
         self.q_velocities = [0.0, 0.0, 0.0]
         
         self.joint_state_msg = JointState()
-        self.joint_state_msg.name = ['joint_1', 'joint_2', 'joint_3']
         self.joint_state_msg.position = [0.0, 0.0, 0.0]
         self.joint_state_msg.velocity = [0.0, 0.0, 0.0]
+        self.joint_state_msg.name = self.get_parameter('joint_name').get_parameter_value().string_array_value
 
         self.position_limits = [2 * pi, 2 * pi, 2 * pi]
-        # self.joint_limits_lower = [-pi/2, -pi/2, -pi/2]
-        # self.joint_limits_upper = [pi/2, pi/2, pi/2]
 
         self.create_timer(1/self.frequency, self.timer_callback)
         self.add_on_set_parameters_callback(self.set_param_callback)
@@ -36,15 +36,9 @@ class RobotController(Node):
             if param.name == 'frequency':
                 self.get_logger().info(f'Updated frequency: {param.value}')
                 self.frequency = param.value
-            # elif param.name == 'L_Base_F1':
-            #     self.get_logger().info(f'Updated max angle: {param.value}')
-            #     self.Z_offset = param.value
-            # elif param.name == 'L_F2_F3':
-            #     self.get_logger().info(f'Updated max speed: {param.value}')
-            #     self.L1 = param.value
-            # elif param.name == 'L_F3_Fe':
-            #     self.get_logger().info(f'Updated max speed: {param.value}')
-            #     self.L2 = param.value
+            elif param.name == 'joint_name':
+                self.get_logger().info(f'Updated Joint Name: {param.value}')
+                self.joint_state_msg.name = param.value
             else:
                 self.get_logger().warn(f'Unknown parameter: {param.name}')
                 # Return failure result for unknown parameters
@@ -64,7 +58,6 @@ class RobotController(Node):
         for i in range(len(self.joint_state_msg.name)):
                 
             self.joint_state_msg.position[i] += self.joint_state_msg.velocity[i] * 1/self.frequency
-            # self.joint_state_msg.position[i] = np.clip(self.joint_state_msg.position[i], self.joint_limits_lower[i], self.joint_limits_upper[i])
             self.joint_state_msg.position[i] %= self.position_limits[i]
             
         self.joint_pub.publish(self.joint_state_msg)

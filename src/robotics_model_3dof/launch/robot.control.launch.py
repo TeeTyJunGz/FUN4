@@ -32,6 +32,7 @@ def generate_launch_description():
         arguments=['-d', rviz_path],
         output='screen')
     
+    # path_description = os.path.join(pkg,'robot','visual','TeeTyBot.xacro')
     path_description = os.path.join(pkg,'robot','visual','my-robot.xacro')
     robot_desc_xml = xacro.process_file(path_description).toxml()
     #robot_desc_xml = xacro.process_file(path_description,mappings={'robot_name': namespace}).toxml()
@@ -56,8 +57,9 @@ def generate_launch_description():
     launch_description.add_action(joint_state_publisher_gui)
     
     package_name = 'robotics_model_3dof'
-    
     executable_name = ['target_randomizer', 'kinematics', 'robot_controller', 'robot_scheduler']
+    joint_name = ['joint_1', 'joint_2', 'joint_3']
+        
     for i in range(len(executable_name)):
         if executable_name[i] == 'target_randomizer':
             node = Node(
@@ -79,6 +81,7 @@ def generate_launch_description():
             executable = executable_name[i] + '.py',
             name = executable_name[i],
             parameters=[
+            {'singularity_thres': 0.01},
             { 'frequency': 100.0 },
             { 'Kp': 1.0 }
             ]
@@ -90,7 +93,8 @@ def generate_launch_description():
             executable = executable_name[i] + '.py',
             name = executable_name[i],
             parameters=[
-            { 'frequency': 100.0 }
+            { 'frequency': 100.0 },
+            {'joint_name': joint_name}
             ]
         )
         elif executable_name[i] == 'robot_scheduler':

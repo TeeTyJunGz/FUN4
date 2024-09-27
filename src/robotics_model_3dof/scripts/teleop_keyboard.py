@@ -26,8 +26,8 @@ class TeleopNode(Node):
     def __init__(self): 
         super().__init__('teleop_twist_keyboard')
         self.keyboard_call = self.create_client(Keyboard, "robotKeyboard")
-        # self.joy_mode_pub = self.create_publisher(String, "joy_mode", 10)
         self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
+        
         self.settings = termios.tcgetattr(sys.stdin)
         self.speed = 0.1
         self.key_timeout = 0.1

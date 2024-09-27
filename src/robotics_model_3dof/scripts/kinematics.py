@@ -7,14 +7,15 @@ from math import pi
 from rclpy.node import Node
 from spatialmath import SE3
 from std_msgs.msg import Bool
-from std_srvs.srv import SetBool
+from geometry_msgs.msg import Twist
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped
 from tf2_ros import TransformListener, Buffer
-from geometry_msgs.msg import TransformStamped, Twist
-from robotic_interfaces.srv import RandomTarget, StateScheduler
 from rcl_interfaces.msg import SetParametersResult
+from robotic_interfaces.srv import RandomTarget, StateScheduler
 
+
+#OLD MDH
 L1 = 0.200
 L2 = 0.120
 L3 = 0.100
@@ -33,14 +34,20 @@ robot = rtb.DHRobot(
     [0, 0, 0, 1]]),
     name = "3DOF_Robot"
 )
-
+# robot = rtb.DHRobot(
+#         [   
+#         rtb.RevoluteMDH(a=0.0,       alpha=0.0,     offset=0.0,     d=0.2   ),
+#         rtb.RevoluteMDH(a=0.0,       alpha=pi/2,    offset=0.0,     d=0.02  ),
+#         rtb.RevoluteMDH(a=0.25,      alpha=0.0,     offset=0.0,     d=0.0  )
+#         ], tool=SE3.Tx(0.28),
+#         name="3DOF_Robot"
+#     )
 
 class Kinematics(Node):
     def __init__(self):
         super().__init__('kinematics_calculator')
         
         self.create_service(StateScheduler, "state_sch", self.call_state_callback)
-        # self.create_service(SetBool, "kinematics_Ready_State_Service", self.kinematics_state_callback)
         self.call_random = self.create_client(RandomTarget, "rand_target")
 
         self.create_subscription(PoseStamped, 'IPK_target', self.target_callback, 10)
@@ -64,13 +71,13 @@ class Kinematics(Node):
         self.target = np.array([0.0, 0.0, 0.0])
         self.target_rc = False
         self.q = [0.0, 0.0, 0.0]
-        self.joint_limits_min = np.array([-np.pi/2, -np.pi/2, -np.pi/2])  # Example joint lower limits
-        self.joint_limits_max = np.array([np.pi/2, np.pi/2, np.pi/2])  
         
         self.q_velocities = JointState()
         
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.tf_eff = np.array([0.0, 0.0, 0.0])
+        self.tf_position = [0.0, 0.0, 0.0]
         self.target_frame = "end_effector"
         self.source_frame = "link_0"
         
@@ -132,10 +139,9 @@ class Kinematics(Node):
         elif srv == "Teleop Based" or srv == "Teleop End Effector":
             self.state_srv = srv
             self.target_rc = True
-            
+
             response.success = True
         elif srv == "IPK":
-            self.get_logger().info(f"Mode {srv}")
             self.state_srv = srv
             self.target_rc = True
             
@@ -161,52 +167,19 @@ class Kinematics(Node):
         msg = Bool()
         self.eff_msg.header.stamp = self.get_clock().now().to_msg()
         
-        # try:
-        #     transform: TransformStamped = self.tf_buffer.lookup_transform(
-        #         self.target_frame,
-        #         self.source_frame,
-        #         rclpy.time.Time()
-        #     )
-        #     translation = transform.transform.translation
-        #     self.current = np.array([translation.x, translation.y, translation.z])
-        #     self.get_logger().info(f"Position: x={self.translation.x}, y={self.translation.y}, z={self.translation.z}")
-
-        # except:
-        #     self.get_logger().info(f"TF Idiot")
-        try:
-            # Lookup the transform between base_link and end_effector
-            now = rclpy.time.Time()
-            transform: TransformStamped = self.tf_buffer.lookup_transform(
-                'link_0',  # Source frame
-                'end_effector',  # Target frame
-                now,  # Get the latest available transform
-                timeout=rclpy.duration.Duration(seconds=5.0)  # Timeout after 1 second
-            )
-
-            # Extract the position
-            position = transform.transform.translation
-            # self.get_logger().info(f"End-Effector Position: x={position.x}, y={position.y}, z={position.z}")
-
-        except Exception as e:
-            self.get_logger().warn(f"Could not transform end_effector: {e}")
-            # return
-        
         if self.target_rc:
-            # current_pose = robot.fkine(self.q).t[:3]
-            current_pose = np.array([position.x, position.y, position.z])
-            # self.eff_msg.pose.position.x = current_pose[0]
-            # self.eff_msg.pose.position.y = current_pose[1]
-            # self.eff_msg.pose.position.z = current_pose[2]
+            current_pose = robot.fkine(self.q).t[:3]
+            # current_pose = self.tf_position
 
             error = self.target - current_pose
-            self.get_logger().info(f"Error: {error}")
-            # self.get_logger().info(self.state_srv)
+
+
             if self.state_srv == "Auto" or self.state_srv == "IPK":
                 v_end_effector = self.Kp * error
                 
             elif self.state_srv == "Teleop Based":
                 v_end_effector = self.cmd_vel
-                # self.get_logger().info(f"End Effector Velocity x: {v_end_effector[0]}, y: {v_end_effector[1]}, z: {v_end_effector[2]}")
+                
             elif self.state_srv == "Teleop End Effector":
                 T_e = robot.fkine(self.q)
                 R_e = T_e.R
@@ -214,16 +187,13 @@ class Kinematics(Node):
                         
             J_full = robot.jacob0(self.q)
             J_translational = J_full[:3, :3]  # 3x3 matrix
-                        
             
             q_dot = np.linalg.pinv(J_translational).dot(v_end_effector)
                         
+            self.q += q_dot * 1/self.frequency
             self.q_velocities.velocity = [q_dot[0], q_dot[1], q_dot[2]]
             
-            # self.q = self.q + q_dot * 1/self.frequency
-            
             manipulability = np.linalg.det(J_full @ J_full.T)
-            # self.get_logger().info(f"Manipulability {manipulability}")
             
             if manipulability > self.singularity_thres:
                 self.q_velocities.velocity = [0.0, 0.0, 0.0]
@@ -234,15 +204,32 @@ class Kinematics(Node):
                 self.target_rc = False
                 
                 msg.data = True
-                # self.pending_response.success = True
-                # self.get_logger().info(f"----------------------------------------------------------------------------------------")
-                # self.get_logger().info(f"Next Target          At x: {self.target[0]} , y: {self.target[1]} , z: {self.target[2]} ")
+
                 self.get_logger().info(f"Target pose reached! At x: {current_pose[0]}, y: {current_pose[1]}, z: {current_pose[2]}")
                 
             self.q_pub.publish(self.q_velocities)
             
         self.kinematics_Ready_State.publish(msg)
-        self.end_effector.publish(self.eff_msg)
+        
+    def tf_echo(self):
+        try:
+            now = rclpy.time.Time()
+            transform = self.tf_buffer.lookup_transform(
+                "link_0",   
+                "end_effector",   
+                now)
+            position = transform.transform.translation
+
+            self.tf_position[0] = position.x
+            self.tf_position[1] = position.y
+            self.tf_position[2] = position.z
+            
+            msg = PoseStamped()
+            msg.pose.position = position
+            self.end_effector.publish(msg)
+        
+        except Exception as e:
+            self.get_logger().error(f"Failed to get transform: {e}")
             
 def main(args=None):
     rclpy.init(args=args)
