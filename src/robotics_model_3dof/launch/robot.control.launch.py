@@ -45,16 +45,10 @@ def generate_launch_description():
                                   parameters=parameters
     )
 
-    joint_state_publisher_gui = Node(
-        package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui'
-    )
-
     launch_description = LaunchDescription()
     
     launch_description.add_action(rviz)
     launch_description.add_action(robot_state_publisher)
-    launch_description.add_action(joint_state_publisher_gui)
     
     package_name = 'robotics_model_3dof'
     executable_name = ['target_randomizer', 'kinematics', 'robot_controller', 'robot_scheduler']

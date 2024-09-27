@@ -199,6 +199,7 @@ class Kinematics(Node):
                 self.q_velocities.velocity = [0.0, 0.0, 0.0]
                 self.get_logger().info(f"Near a singularity")
             
+            
             if np.linalg.norm(error) < 1e-3 and (self.state_srv != "Teleop Based" or self.state_srv != "Teleop End Effector"):
                 self.q_velocities.velocity = [0.0, 0.0, 0.0]
                 self.target_rc = False
@@ -207,9 +208,11 @@ class Kinematics(Node):
 
                 self.get_logger().info(f"Target pose reached! At x: {current_pose[0]}, y: {current_pose[1]}, z: {current_pose[2]}")
                 
+            self.eff_msg.pose.position.x, self.eff_msg.pose.position.y, self.eff_msg.pose.position.z = current_pose
             self.q_pub.publish(self.q_velocities)
             
         self.kinematics_Ready_State.publish(msg)
+        self.end_effector.publish(self.eff_msg)
         
     def tf_echo(self):
         try:
@@ -223,10 +226,6 @@ class Kinematics(Node):
             self.tf_position[0] = position.x
             self.tf_position[1] = position.y
             self.tf_position[2] = position.z
-            
-            msg = PoseStamped()
-            msg.pose.position = position
-            self.end_effector.publish(msg)
         
         except Exception as e:
             self.get_logger().error(f"Failed to get transform: {e}")
