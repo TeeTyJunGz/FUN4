@@ -3,10 +3,9 @@ import rclpy
 import random
 
 from rclpy.node import Node
-from std_srvs.srv import SetBool
 from geometry_msgs.msg import PoseStamped
-from robotic_interfaces.srv import RandomTarget
 from rcl_interfaces.msg import SetParametersResult
+from robotic_interfaces.srv import RandomTarget
 
 class TargetRandomizer(Node):
     def __init__(self):

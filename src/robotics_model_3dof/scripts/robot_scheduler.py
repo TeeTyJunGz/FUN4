@@ -2,11 +2,10 @@
 import rclpy
 
 from rclpy.node import Node
-from std_msgs.msg import Bool, String
-from std_srvs.srv import SetBool
+from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped
-from robotic_interfaces.srv import Keyboard, StateScheduler
 from rcl_interfaces.msg import SetParametersResult
+from robotic_interfaces.srv import Keyboard, StateScheduler
 
 class RobotSCHController(Node):
     def __init__(self):

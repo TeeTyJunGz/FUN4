@@ -1,10 +1,8 @@
 #!/usr/bin/python3
-
 import rclpy
 import sys, select, termios, tty
 
 from rclpy.node import Node
-from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from robotic_interfaces.srv import Keyboard
 
