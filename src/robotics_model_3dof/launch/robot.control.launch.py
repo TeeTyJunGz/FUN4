@@ -93,6 +93,19 @@ def generate_launch_description():
             { 'frequency': 100.0 }
             ]
         )
+        elif executable_name[i] == 'robot_scheduler':
+            node = Node(
+            package = package_name,
+            namespace = '',
+            executable = executable_name[i] + '.py',
+            name = executable_name[i],
+            parameters=[
+            { 'frequency': 100.0 },
+            { 'L_Base_F1': 0.2 },
+            { 'L_F2_F3': 0.25 },
+            { 'L_F3_Fe': 0.28 }
+            ]
+        )
         else:
             node = Node(
             package = package_name,

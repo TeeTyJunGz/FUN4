@@ -19,7 +19,7 @@ class RobotController(Node):
         super().__init__('robot_controller')
         
         self.joint_pub = self.create_publisher(JointState, "/joint_states", 10)
-        self.create_subscription(JointState, "/q_velocities", self.q_velocities_callback, 10)
+        self.create_subscription(JointState, "q_velocities", self.q_velocities_callback, 10)
         self.declare_parameter('frequency', 100.0)
 
         self.frequency = self.get_parameter('frequency').get_parameter_value().double_value

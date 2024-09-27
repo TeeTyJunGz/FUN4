@@ -40,12 +40,14 @@ class Kinematics(Node):
         super().__init__('kinematics_calculator')
         
         self.create_service(SetBool, "auto", self.call_auto_callback)
+        # self.create_service(SetBool, "kinematics_Ready_State_Service", self.kinematics_state_callback)
         self.call_random = self.create_client(RandomTarget, "rand_target")
 
         self.create_subscription(PoseStamped, 'target', self.target_callback, 10)
         self.kinematics_Ready_State = self.create_publisher(Bool, 'kinematics_Ready_State', 10)
+        self.kinematics_Ready_State = self.create_publisher(Bool, 'kinematics_Ready_State', 10)
 
-        self.q_pub = self.create_publisher(JointState, "/q_velocities", 10)
+        self.q_pub = self.create_publisher(JointState, "q_velocities", 10)
         
         self.declare_parameter('frequency', 100.0)
         self.declare_parameter('Kp', 5.0)
@@ -110,12 +112,14 @@ class Kinematics(Node):
         srv = request.data
         if srv:
             self.call_random_function(srv)
-            response.success = True
+            self.pending_response = response
+            # response.success = True
+            return self.pending_response
             
         else:
             response.success = False
             
-        return response
+            return response
     
     def target_callback(self, msg: PoseStamped):
         x = msg.pose.position.x
@@ -127,7 +131,6 @@ class Kinematics(Node):
         
     def timer_callback(self):
         msg = Bool()
-        # msg.data = True
         
         try:
             transform: TransformStamped = self.tf_buffer.lookup_transform(
@@ -152,12 +155,6 @@ class Kinematics(Node):
             J_translational = J_full[:3, :3]  # 3x3 matrix
 
             q_dot = np.linalg.pinv(J_translational).dot(v_end_effector)
-
-            # print(f"Current: {current_pose}")
-            # print(f"targets: {self.target}")
-            # print(f"Errored: {error}")
-
-            # print("Joint velocities: ", q_dot)
             
             self.q_velocities.velocity = [q_dot[0], q_dot[1], q_dot[2]]
             
@@ -168,9 +165,8 @@ class Kinematics(Node):
                 self.target_rc = False
                 
                 msg.data = True
-                
+                # self.pending_response.success = True
                 self.get_logger().info(f"Target pose reached! At x: {current_pose[0]}, y: {current_pose[1]}, z: {current_pose[2]}")
-                # msg.data = False
                 
             self.q_pub.publish(self.q_velocities)
             

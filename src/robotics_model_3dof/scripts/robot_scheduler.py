@@ -14,6 +14,8 @@ class RobotSCHController(Node):
 
         self.create_service(Keyboard, "robots_keyboard", self.keyboard_callback)
         self.call_run_auto = self.create_client(SetBool, "auto")
+        # self.call_kinematics_state = self.create_client(SetBool, "kinematics_Ready_State_Service")
+        
         # self.call_random = self.create_client(SetBool, "rand_target")
         
         self.create_subscription(Bool, 'kinematics_Ready_State', self.kinematics_state_callback, 10)
@@ -96,6 +98,7 @@ class RobotSCHController(Node):
                         
             response.message = "Change mode to Autonomous (Auto) successfully"            
             response.success = True
+            
         else:
             response.message = "Unknown Mode, try use IPK, Teleop, Auto"            
             response.success = False
@@ -105,16 +108,27 @@ class RobotSCHController(Node):
     def kinematics_state_callback(self, msg: Bool):
         if msg.data:
             self.kinematics_state = True
-        # else:
-        #     self.kinematics_state = False
         
     def call_auto_function(self, boolean):
         srv = SetBool.Request()
         srv.data = boolean
         
-        self.call_run_auto.call_async(srv)
+        future = self.call_run_auto.call_async(srv)
+        # future.add_done_callback(self.handle_auto_target_response)
         # rclpy.spin_until_future_complete(self, future)
         
+    # def handle_auto_target_response(self, future):
+    #     try:
+    #         response = future.result()
+    #         if response:
+    #             self.kinematics_state = response.success
+    #             self.get_logger().info(f"Kine: {self.kinematics_state}")
+
+    #         else:
+    #             self.get_logger().error("Received an empty response from the service.")
+    #     except Exception as e:
+    #         self.get_logger().error(f"Service call failed with error: {str(e)}")
+            
     def pub_target(self, arr):
         msg = PoseStamped()
         msg.pose.position.x = arr[0]
@@ -123,16 +137,31 @@ class RobotSCHController(Node):
         self.target_pub.publish(msg)
         
     def timer_callback(self):
-        if self.mode == "IPK" and self.kinematics_state and self.IPK:
+        if self.mode == "Initial":
+            pass
+        
+        elif self.mode == "IPK" and self.kinematics_state and self.IPK:
             
             self.pub_target(self.IPK_target)
             self.kinematics_state = False
             self.IPK = False
                         
+        elif self.mode == "Teleop":
+            pass
+                        
         elif self.mode == "Auto" and self.kinematics_state:
             
             self.call_auto_function(True)
+            
+            # srv = SetBool.Request()
+            # srv.data = True
+            # future = self.call_kinematics_state.call_async(srv)
+            
+            # future.add_done_callback(self.handle_random_target_response)
+            
             self.kinematics_state = False
+            
+
             
 def main(args=None):
     rclpy.init(args=args)
