@@ -2,3 +2,4 @@
 build/
 install/
 log/
+src/robotics_model_3dof/scripts/3DOF_workspace.py
