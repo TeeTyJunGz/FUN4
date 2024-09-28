@@ -255,8 +255,10 @@ This project need a **python 3.8+** environment and ```Robotics Toolbox for Pyth
     ```
 
 ## Usage
-Instructions on how to use the project or its features.
+### Workspace of 3DOF Robot
+[workspace](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/workspace.png)
 
+This workspace generated from find limit of ```q1 q2 q3``` and sample all possible data that ```q1 q2 q3``` can go to that position, last plot all position to a graph.
 ## Contributing
 Guidelines on how to contribute to the project.
 
