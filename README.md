@@ -283,18 +283,27 @@ ros2 service call /rand_target robotic_interfaces/srv/RandomTarget "data: true"
 
     Target won't spawn if you request ```False``` and this service will do nothing.
 
-**You can visualized an ```End Effector``` too with these command.**
+**You can visualized an ```End Effector``` with controller mode too, with these command.**
 
-Open a new terminal and ros2 run this
+Open a new terminal
 
 ```bash
 ros2 run robotics_model_3dof teleop_keyboard.py 
 ```
-![teleoperation_keyboard](ff)
 
-If your ```teleop_keyboard``` okay correctly at launch file terminal will show
+![teleoperation_keyboard](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/teleoperation_Keyboard.png)
 
-![launch_connect_teleop](djuffkimdjghbbb)
+**If your ```teleop_keyboard``` open correctly at launch file terminal will show Tele-operation Mode**
+
+![launch_connect_teleop](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/launch_connect_teleop.png)
+
+**Now at rviz2 an ```End Effector Pose``` will appeared**
+
+![rviz_eff](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/rviz_eff.png)
+
+
+
+
 ```bash
         Control your robot!
         ---------------------------
