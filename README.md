@@ -325,3 +325,25 @@ ros2 run robotics_model_3dof teleop_keyboard.py
     Teleop Keyboard is just a Custom Service Interfaces with GUI, you can change mode same as Custom Service Interfaces. Input for IPK mode can also done within this keyboard
 
 ![teleoperation_keyboard](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/teleoperation_Keyboard.png)
+
+### Robot's Mode
+
+-   **IPK (Inverse Pose Kinematics Mode)** 
+
+    This mode will wait for user input to controlled a robot, user must input 3 positions for x, y, z. When this mode get a position, it wiil calculated for response 2 things .
+    
+    1. **```success```** response *```True```* when target is in workspace, ```False``` when target out a workspace.
+
+    2. **```workspace```** response when q1 q2 q3 can go to target.
+
+- **Teleop Based, Teleop End Effector**
+
+    This mode must control via Teleop Keyboard only. This mode will controlled a robot using velocity for each axis (x, y, z). There're 2 type.
+
+    1. **```Based```** All velocity that this node craete will refferance from ```Base```.
+
+    2. **```End Effector```** All velocity that this node craete will refferance from ```End Effector```.
+
+- **Autonomouse**
+
+    This node will call a service name **```rand_target```** that will random a target within workspace of robot and response target to **```kinematics```** Node and send q1, q2, q3 to robot.
