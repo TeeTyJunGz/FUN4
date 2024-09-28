@@ -3,6 +3,7 @@ import rclpy
 import random
 
 from rclpy.node import Node
+from std_msgs.msg import Header
 from geometry_msgs.msg import PoseStamped
 from rcl_interfaces.msg import SetParametersResult
 from robotic_interfaces.srv import RandomTarget
@@ -24,6 +25,7 @@ class TargetRandomizer(Node):
         self.L1 = self.get_parameter('L_F2_F3').get_parameter_value().double_value
         self.L2 = self.get_parameter('L_F3_Fe').get_parameter_value().double_value
         
+        self.msg = PoseStamped()
         self.target = []
 
         self.add_on_set_parameters_callback(self.set_param_callback)
@@ -67,17 +69,20 @@ class TargetRandomizer(Node):
                     
                     self.target = [x, y, z]
                     
-                    msg = PoseStamped()
-                    msg.pose.position.x = x
-                    msg.pose.position.y = y
-                    msg.pose.position.z = z
+                    self.msg.header = Header()
+                    self.msg.header.stamp = self.get_clock().now().to_msg()
+                    
+                    self.msg.header.frame_id = 'link_0'
+                    self.msg.pose.position.x = x
+                    self.msg.pose.position.y = y
+                    self.msg.pose.position.z = z
                     
                     response.x_target = x
                     response.y_target = y
                     response.z_target = z
                     response.success = True
                     
-                    self.target_pub.publish(msg)
+                    self.target_pub.publish(self.msg)
                     break
         else:
             response.success = False
