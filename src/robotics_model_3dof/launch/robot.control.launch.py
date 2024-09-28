@@ -32,8 +32,8 @@ def generate_launch_description():
         arguments=['-d', rviz_path],
         output='screen')
     
-    # path_description = os.path.join(pkg,'robot','visual','TeeTyBot.xacro')
-    path_description = os.path.join(pkg,'robot','visual','my-robot.xacro')
+    path_description = os.path.join(pkg,'robot','visual','TeeTyBot.xacro')
+    # path_description = os.path.join(pkg,'robot','visual','my-robot.xacro')
     robot_desc_xml = xacro.process_file(path_description).toxml()
     #robot_desc_xml = xacro.process_file(path_description,mappings={'robot_name': namespace}).toxml()
     
