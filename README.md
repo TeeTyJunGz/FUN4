@@ -256,15 +256,50 @@ This project need a **python 3.8+** environment and ```Robotics Toolbox for Pyth
 
 ## Usage
 ### Workspace of 3DOF Robot
-![workspace](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/workspace.png)
+![workspace](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/workspace.png)
 
 This workspace generated from find limit of ```q1 q2 q3``` and sample all possible data that ```q1 q2 q3``` can go to that position, last plot all position to a graph.
 
 ### Launch Project
 You can launch the project using the provided ROS2 launch file. The launch file is visualized a 3DOF robot in rviz2, that you can control leter.
+
 ```bash
 ros2 launch robotics_model_3dof robot.control.launch.py 
 ```
+
+![rviz](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/rviz_startup.png)
+
+
+You can random a visualized target ```Pose``` in this rviz2 with a service via terminal
+
+```bash
+ros2 service call /rand_target robotic_interfaces/srv/RandomTarget "data: true" 
+```
+- ```data``` = true 
+
+    Target will random spawned somewhere in the robot workspace, and this service will ```response``` a position that random too.
+
+- ```data``` = false
+
+    Target won't spawn if you request ```False``` and this service will do nothing.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Contributing
 Guidelines on how to contribute to the project.
 
