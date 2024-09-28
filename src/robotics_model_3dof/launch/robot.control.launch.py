@@ -16,10 +16,12 @@ created by Thanacha Choopojcharoen at CoXsys Robotics (2022)
 """
 
 from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
 from launch import LaunchDescription
 from launch_ros.actions import Node
-import os
 import xacro    
+import os
     
 def generate_launch_description():
     
@@ -50,6 +52,15 @@ def generate_launch_description():
     launch_description.add_action(rviz)
     launch_description.add_action(robot_state_publisher)
     
+    Kinematics_Kp = LaunchConfiguration('Kinematics_Kp')
+    Kinematics = DeclareLaunchArgument(
+        'Kinematics_Kp',
+        default_value = '1.0'
+    )
+    
+    launch_description.add_action(Kinematics)
+    
+    
     package_name = 'robotics_model_3dof'
     executable_name = ['target_randomizer', 'kinematics', 'robot_controller', 'robot_scheduler']
     joint_name = ['joint_1', 'joint_2', 'joint_3']
@@ -77,7 +88,7 @@ def generate_launch_description():
             parameters=[
             {'singularity_thres': 0.01},
             { 'frequency': 100.0 },
-            { 'Kp': 1.0 }
+            { 'Kp': Kinematics_Kp }
             ]
         )
         elif executable_name[i] == 'robot_controller':
