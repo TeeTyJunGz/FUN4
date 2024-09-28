@@ -11,7 +11,7 @@ class RobotSCHController(Node):
     def __init__(self):
         super().__init__('robot_scheduler')
 
-        self.create_service(Keyboard, "robotKeyboard", self.keyboard_callback)
+        self.create_service(Keyboard, "/robotKeyboard", self.keyboard_callback)
         self.call_by_sch = self.create_client(StateScheduler, "state_sch")
 
         self.create_subscription(Bool, 'kinematics_Ready_State', self.kinematics_state_callback, 10)
