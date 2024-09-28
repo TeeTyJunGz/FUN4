@@ -109,11 +109,16 @@ This project need a **python 3.8+** environment and ```Robotics Toolbox for Pyth
 1. Make sure your environment have [**ROS2 Humble** (or your preferred ROS2 distribution)](https://docs.ros.org/en/humble/Installation.html)
 
     ```sh
-    printenv ROS_DISTRO
+    printenv | grep -i ROS
     ```
 
     ```bash
-    humble
+    ROS_VERSION=2
+    ROS_PYTHON_VERSION=3
+    .
+    .
+    .
+    ROS_DISTRO=humble
     ```
 
     if you see **humble** or other **ROS2 Distributions** maens your ROS2 is ready now.
@@ -121,10 +126,10 @@ This project need a **python 3.8+** environment and ```Robotics Toolbox for Pyth
 2. Install ```RVIZ2``` ```TF2``` and ```robot_state_publisher package``` in your ROS2 Environment. With install ```ros-desktop-full```
 
     ```bash
-    sudo apt install ros-{ROS2_DISTRO}-desktop-full
+    sudo apt install ros-{ROS_DISTRO}-desktop-full
     ```
 
-    replace **{ROS2_DISTRO}** with your ros2 distributions. **Example**
+    replace **{ROS_DISTRO}** with your ros2 distributions. **Example**
 
     ```bash
     sudo apt install ros-humble-desktop-full
@@ -134,9 +139,11 @@ This project need a **python 3.8+** environment and ```Robotics Toolbox for Pyth
 
     ```bash
     source /opt/ros/iron/setup.bash
+    echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+    source ~/.bashrc
     ```
 
-4. Check a requirement packages in ROS2.
+4. Check a require ```packages``` in ROS2.
 
     ```bash
     ros2 pkg executables rviz2
@@ -152,8 +159,100 @@ This project need a **python 3.8+** environment and ```Robotics Toolbox for Pyth
     tf2_ros tf2_monitor
     robot_state_publisher robot_state_publisher
     ```
+5. Check a require ```interfaces``` in ROS2
 
-    Check that you have all package above for next step.
+    ```bash
+    ros2 interface package sensor_msgs 
+    ```
+
+    ```bash
+    sensor_msgs/msg/CameraInfo
+    sensor_msgs/msg/Illuminance
+    sensor_msgs/msg/NavSatStatus
+    sensor_msgs/msg/PointCloud
+    sensor_msgs/msg/LaserEcho
+    sensor_msgs/msg/FluidPressure
+    sensor_msgs/msg/BatteryState
+    sensor_msgs/msg/Range
+    sensor_msgs/msg/JoyFeedbackArray
+    sensor_msgs/msg/Joy
+    sensor_msgs/srv/SetCameraInfo
+    sensor_msgs/msg/ChannelFloat32
+    sensor_msgs/msg/NavSatFix
+    sensor_msgs/msg/Temperature
+    sensor_msgs/msg/Imu
+    sensor_msgs/msg/RelativeHumidity
+    sensor_msgs/msg/LaserScan
+    sensor_msgs/msg/MultiDOFJointState
+    sensor_msgs/msg/MultiEchoLaserScan
+    sensor_msgs/msg/MagneticField
+    sensor_msgs/msg/PointCloud2
+    sensor_msgs/msg/CompressedImage
+    sensor_msgs/msg/JoyFeedback
+    sensor_msgs/msg/TimeReference
+    sensor_msgs/msg/RegionOfInterest
+    sensor_msgs/msg/JointState
+    sensor_msgs/msg/Image
+    sensor_msgs/msg/PointField
+    ```
+
+    **Check that you have all package above for next step.**
+
+### Install Package
+1. Go to ~ ```PATH``` and clone this repository:
+    ```bash
+    cd ~
+    git clone https://github.com/TeeTyJunGz/FUN4.git
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd FUN4
+    ```
+3. Build and source the workspace:
+    ```bash
+    colcon build && source install/setup.bash
+    ```
+    **You should finished build with 2 packages.**
+    ```bash
+    Starting >>> robotic_interfaces
+    Starting >>> robotics_model_3dof
+    Finished <<< robotics_model_3dof [0.42s]                                    
+    Finished <<< robotic_interfaces [0.71s]                  
+
+    Summary: 2 packages finished [0.89s]
+    ```
+4. Add source to ```~/.bashrc```:
+    ```bash
+    echo "source ~/FUN4/install/setup.bash" >> ~/.bashrc
+    ```
+5. Source ```~/.bashrc```:
+    ```bash
+    source ~/.bashrc
+    ```
+6. Check ROS2 packages:
+    ```bash
+    ros2 pkg executables robotics_model_3dof
+    ```
+    **This is all ```packages``` from this project.**
+    ```bash
+    robotics_model_3dof TF_Check.py
+    robotics_model_3dof cpp_node_test
+    robotics_model_3dof kinematics.py
+    robotics_model_3dof robot_controller.py
+    robotics_model_3dof robot_scheduler.py
+    robotics_model_3dof target_randomizer.py
+    robotics_model_3dof teleop_keyboard.py
+    ```
+6. Check ROS2 interfaces:
+    ```bash
+    ros2 interface package robotic_interfaces
+    ```
+    **This is all ```interfaces``` from this project.**
+    ```bash
+    robotic_interfaces/srv/Keyboard
+    robotic_interfaces/srv/RandomTarget
+    robotic_interfaces/srv/StateScheduler
+    ```
 
 ## Usage
 Instructions on how to use the project or its features.
