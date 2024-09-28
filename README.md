@@ -301,48 +301,5 @@ ros2 run robotics_model_3dof teleop_keyboard.py
 
 ![rviz_eff](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/rviz_eff.png)
 
+### Controlled Robot
 
-
-
-```bash
-        Control your robot!
-        ---------------------------
-        Moving around:
-             w        |         -x
-        a    s    d   |   +y    +x    -y
-            
-        i/, : increase/decrease z axis velocity
-
-        Current Speed: 
-            u/m : increase/decrease speed
-
-        Mode:
-            c : Swap mode (Teleoperation (Defualt) | Auto)
-            b : Teleoperation Based Controlled (Defualt)
-            e : Teleoperation End Effector Controlled
-
-        Press I (UPPERCASE) to input Inverse Pose Kinematics Position
-        Inverse Pose Kinematics Position x:      y:      z: 
-
-        CTRL-C to quit
-```
-
-
-
-
-
-
-
-
-
-
-
-
-## Contributing
-Guidelines on how to contribute to the project.
-
-## License
-This project is licensed under the [License Name] - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Acknowledgments
-Mention anyone who contributed to the project or inspired you. 

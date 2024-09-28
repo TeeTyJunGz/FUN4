@@ -27,7 +27,6 @@ class RobotSCHController(Node):
         self.L1 = self.get_parameter('L_F2_F3').get_parameter_value().double_value
         self.L2 = self.get_parameter('L_F3_Fe').get_parameter_value().double_value
 
-        self.joy = "Based"
         self.mode = "Initial"
         self.kinematics_state = True
         self.IPK = False
@@ -88,7 +87,7 @@ class RobotSCHController(Node):
                 self.get_logger().warn(f"Target is not in robot workspace!")
                 response.workspace = "Target is not in robot workspace!"
 
-                response.success = False
+                response.success = True
             
         elif "Teleop" in srv.mode:
             self.get_logger().info("Tele-operation Mode")
