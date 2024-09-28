@@ -261,7 +261,7 @@ This project need a **python 3.8+** environment and ```Robotics Toolbox for Pyth
 This workspace generated from find limit of ```q1 q2 q3``` and sample all possible data that ```q1 q2 q3``` can go to that position, last plot all position to a graph.
 
 ### Launch Project
-You can launch the project using the provided ROS2 launch file. The launch file is visualized a 3DOF robot in rviz2, that you can control leter.
+You can launch the project using the provided ROS2 launch file. The launch file is visualized a 3DOF robot in rviz2, that you can control later.
 
 ```bash
 ros2 launch robotics_model_3dof robot.control.launch.py 
@@ -270,7 +270,7 @@ ros2 launch robotics_model_3dof robot.control.launch.py
 ![rviz](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/rviz_startup.png)
 
 
-You can random a visualized target ```Pose``` in this rviz2 with a service via terminal
+**You can random a visualized target ```Pose``` in this rviz2 with a service via terminal**
 
 ```bash
 ros2 service call /rand_target robotic_interfaces/srv/RandomTarget "data: true" 
@@ -283,11 +283,40 @@ ros2 service call /rand_target robotic_interfaces/srv/RandomTarget "data: true"
 
     Target won't spawn if you request ```False``` and this service will do nothing.
 
+**You can visualized an ```End Effector``` too with these command.**
 
+Open a new terminal and ros2 run this
 
+```bash
+ros2 run robotics_model_3dof teleop_keyboard.py 
+```
+![teleoperation_keyboard](ff)
 
+If your ```teleop_keyboard``` okay correctly at launch file terminal will show
 
+![launch_connect_teleop](djuffkimdjghbbb)
+```bash
+        Control your robot!
+        ---------------------------
+        Moving around:
+             w        |         -x
+        a    s    d   |   +y    +x    -y
+            
+        i/, : increase/decrease z axis velocity
 
+        Current Speed: 
+            u/m : increase/decrease speed
+
+        Mode:
+            c : Swap mode (Teleoperation (Defualt) | Auto)
+            b : Teleoperation Based Controlled (Defualt)
+            e : Teleoperation End Effector Controlled
+
+        Press I (UPPERCASE) to input Inverse Pose Kinematics Position
+        Inverse Pose Kinematics Position x:      y:      z: 
+
+        CTRL-C to quit
+```
 
 
 

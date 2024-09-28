@@ -7,7 +7,7 @@ from math import pi
 from tf2_ros import TransformListener, Buffer
 from rclpy.node import Node
 from spatialmath import SE3
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Header
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
@@ -66,7 +66,9 @@ class Kinematics(Node):
         self.Kp = self.get_parameter('Kp').get_parameter_value().double_value
         
         self.eff_msg = PoseStamped()
-        
+        self.eff_msg.header = Header()
+        self.eff_msg.header.frame_id = 'link_0'
+                
         self.cmd_vel= np.array([0.0, 0.0, 0.0])
         self.target = np.array([0.0, 0.0, 0.0])
         self.target_rc = False
