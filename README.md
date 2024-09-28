@@ -23,9 +23,9 @@ The repository includes the necessary code for setting up the robot, controlling
 - **ROS2 Integration:** A ROS2 client-server communication is established to generate random targets and update the robot's setpoint accordingly.
 - **RVIZ Model Visualized:** Fast and easy visualizer with adjustable models.
 
-## Preview
+<!-- ## Preview -->
 
-## System Architechture
+<!-- ## System Architechture -->
 
 ## Prerequisites
 To run this project, ensure you have the following installed:
