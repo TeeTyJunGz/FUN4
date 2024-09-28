@@ -301,5 +301,22 @@ ros2 run robotics_model_3dof teleop_keyboard.py
 
 ![rviz_eff](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/rviz_eff.png)
 
-### Controlled Robot
+### Robot Controller
+**You can controlled robot using ```Cutom Service Interface``` or ```Teleop Keyboard```**
 
+![custominterface](LLLLL)
+
+
+- **Custom Service Interface**:
+
+    **Request**
+    - ```string mode``` : Mode selector **[ IPK, Teleop Based, Teleop End Effector, Auto ]**
+    
+    - ```float64 x, y, z``` : Given position setpoint for **IPK** mode
+    
+    **Response**
+
+    - ```bool success``` : Responsed **``True``** when can change mode and **``False``** when cannot change
+
+    - ```string message``` : Responsed a message I tell requester about mode changes
+    - ```string workspace``` : Responsed only when use **IPK** mode and float64 x, y, z is out workspace
