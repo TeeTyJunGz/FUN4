@@ -304,10 +304,10 @@ ros2 run robotics_model_3dof teleop_keyboard.py
 ### Robot Controller
 **You can controlled robot using ```Cutom Service Interface``` or ```Teleop Keyboard```**
 
-![custominterface](LLLLL)
+![custominterface](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/CustomKeyInter.png)
 
 
-- **Custom Service Interface**:
+- **```Custom Service Interface```**
 
     **Request**
     - ```string mode``` : Mode selector **[ IPK, Teleop Based, Teleop End Effector, Auto ]**
