@@ -138,7 +138,7 @@ This project need a **python 3.8+** environment and ```Robotics Toolbox for Pyth
 3. Source your environment.
 
     ```bash
-    source /opt/ros/iron/setup.bash
+    source /opt/ros/humble/setup.bash
     echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
     source ~/.bashrc
     ```
