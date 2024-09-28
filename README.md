@@ -266,7 +266,10 @@ You can launch the project using the provided ROS2 launch file. The launch file 
 ```bash
 ros2 launch robotics_model_3dof robot.control.launch.py 
 ```
-
+If you need to adjust **```Kp```** for **```speed```** . Change 5.0 to your custom **```Kp```**
+```bash
+ros2 launch robotics_model_3dof robot.control.launch.py Kinematics_Kp:=5.0
+```
 ![rviz](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/rviz_startup.png)
 
 
