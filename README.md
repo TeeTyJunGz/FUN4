@@ -291,8 +291,6 @@ Open a new terminal
 ros2 run robotics_model_3dof teleop_keyboard.py 
 ```
 
-![teleoperation_keyboard](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/teleoperation_Keyboard.png)
-
 **If your ```teleop_keyboard``` open correctly at launch file terminal will show Tele-operation Mode**
 
 ![launch_connect_teleop](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/launch_connect_teleop.png)
