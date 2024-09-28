@@ -305,7 +305,7 @@ ros2 run robotics_model_3dof teleop_keyboard.py
 ![custominterface](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/CustomKeyInter.png)
 
 
-- **```Custom Service Interface```**
+- **```Custom Service Interfaces```**
 
     **Request**
     - ```string mode``` : Mode selector **[ IPK, Teleop Based, Teleop End Effector, Auto ]**
@@ -318,3 +318,10 @@ ros2 run robotics_model_3dof teleop_keyboard.py
 
     - ```string message``` : Responsed a message I tell requester about mode changes
     - ```string workspace``` : Responsed only when use **IPK** mode and float64 x, y, z is out workspace
+
+
+- **```Teleop Keyboard```**
+    
+    Teleop Keyboard is just a Custom Service Interfaces with GUI, you can change mode same as Custom Service Interfaces. Input for IPK mode can also done within this keyboard
+
+![teleoperation_keyboard](https://raw.githubusercontent.com/TeeTyJunGz/FUN4/refs/heads/main/src/robotics_model_3dof/images/teleoperation_Keyboard.png)
