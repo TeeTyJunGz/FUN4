@@ -41,7 +41,7 @@ To run this project, ensure you have the following installed:
 
 ## Installation
 ### Setup Environment
-This project need a **python 3.8+** environment and **Robotics Toolbox for Python** library.
+This project need a **python 3.8+** environment and ```Robotics Toolbox for Python``` library.
 
 1. Make sure your environment use **python 3.8+** by using this command.
 
@@ -56,7 +56,7 @@ This project need a **python 3.8+** environment and **Robotics Toolbox for Pytho
     ```
     Make sure pip is installed using `pip3 -V`
 
-3. Install **Robotics Toolbox for Python** using pip3. Tutorial from [**Robotics Toolbox GitHub**](https://github.com/petercorke/robotics-toolbox-python).
+3. Install ```Robotics Toolbox for Python``` using pip3. Tutorial from [**Robotics Toolbox GitHub**](https://github.com/petercorke/robotics-toolbox-python).
     ```bash
     pip3 install roboticstoolbox-python
     ```
@@ -64,7 +64,7 @@ This project need a **python 3.8+** environment and **Robotics Toolbox for Pytho
     ```bash
     pip3 show roboticstoolbox-python
     ```  
-    For use **Robotics Toolbox for Python** have to use **numpy < 1.25.0**
+    For use ```Robotics Toolbox for Python``` have to use **numpy < 1.25.0**
     ```bash
     pip3 install numpy==1.24.4
     ```
@@ -102,7 +102,59 @@ This project need a **python 3.8+** environment and **Robotics Toolbox for Pytho
     >>> 
     [2]+  Stopped                 python3
     ```
-    If you see a table, so now your **roboticstoolbox-python** library is ready to use now.
+    If you see a table, so now your **roboticstoolbox-python** library is ready now.
+
+### Setup ROS2
+
+1. Make sure your environment have [**ROS2 Humble** (or your preferred ROS2 distribution)](https://docs.ros.org/en/humble/Installation.html)
+
+    ```sh
+    printenv ROS_DISTRO
+    ```
+
+    ```bash
+    humble
+    ```
+
+    if you see **humble** or other **ROS2 Distributions** maens your ROS2 is ready now.
+
+2. Install ```RVIZ2``` ```TF2``` and ```robot_state_publisher package``` in your ROS2 Environment. With install ```ros-desktop-full```
+
+    ```bash
+    sudo apt install ros-{ROS2_DISTRO}-desktop-full
+    ```
+
+    replace **{ROS2_DISTRO}** with your ros2 distributions. **Example**
+
+    ```bash
+    sudo apt install ros-humble-desktop-full
+    ```
+
+3. Source your environment.
+
+    ```bash
+    source /opt/ros/iron/setup.bash
+    ```
+
+4. Check a requirement packages in ROS2.
+
+    ```bash
+    ros2 pkg executables rviz2
+    ros2 pkg executables tf2_ros
+    ros2 pkg executables robot_state_publisher 
+    ```
+
+    ```bash
+    rviz2 rviz2
+    tf2_ros buffer_server
+    tf2_ros static_transform_publisher
+    tf2_ros tf2_echo
+    tf2_ros tf2_monitor
+    robot_state_publisher robot_state_publisher
+    ```
+
+    Check that you have all package above for next step.
+
 ## Usage
 Instructions on how to use the project or its features.
 
